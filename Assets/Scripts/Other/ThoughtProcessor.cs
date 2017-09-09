@@ -21,9 +21,12 @@ public class ThoughtProcessor : Thoughts {
 
     public override void Start () {
         base.Start();
-        _foodThoughts = GetComponentInChildren<FoodThoughts>();
-        _actionThoughts = GetComponentInChildren<ActionThoughts>();
-        _feedbackThoughts = GetComponentInChildren<FeedbackThoughts>();
+        if (_foodThoughts == null)
+            _foodThoughts = GetComponentInChildren<FoodThoughts>();
+        if(_actionThoughts == null)
+            _actionThoughts = GetComponentInChildren<ActionThoughts>();
+        if(_feedbackThoughts == null)
+            _feedbackThoughts = GetComponentInChildren<FeedbackThoughts>();
     }//Start
 
 

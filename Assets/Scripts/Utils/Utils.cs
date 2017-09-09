@@ -71,7 +71,7 @@ namespace GameUtils {
         /// <param name="goName">Name of the game obbject that was not found.</param>
         public static void WarningGONotFound(string goName) {
         #if UNITY_EDITOR
-            Debug.LogWarning("Could find Spawner with the name '" + goName + "'!");
+            Debug.LogWarning("Couldn't find Spawner with the name '" + goName + "'!");
         #endif
         }
 

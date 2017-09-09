@@ -8,7 +8,6 @@ public class Shop : MonoBehaviour {
     public static Shop Instance;
 
     [Range(0, 1)]public float ChanceOfAttraction = 0.5f;
-    public ShopStorage shopStorage;
     public int MaxOrders = 2;
     public int MaxPrepedFood = 2;
     public List<BasicAI> WaitingQ       { get { return this.waitingQueue; } }
@@ -20,6 +19,10 @@ public class Shop : MonoBehaviour {
     public Recepe Recepe;
     
     protected Dictionary<BasicAI, Recepe> cooking;
+    protected Storage _shopStorage;
+
+
+    /* ----------------------------------------------------------------------- */
 
 
     public void Start() {
@@ -27,6 +30,9 @@ public class Shop : MonoBehaviour {
         waitingQueue    = new List<BasicAI>();
         orderedQueue    = new List<BasicAI>();
         cooking         = new Dictionary<BasicAI, Recepe>();
+        _shopStorage    = GameManager.Instance.GlobalStorage;
+
+        DontDestroyOnLoad(this.gameObject);
     }//Start
 
 
@@ -69,7 +75,7 @@ public class Shop : MonoBehaviour {
 
     public void ServeClient(BasicAI client, Recepe toServe) {
         float cash = client.RecieveOrder(toServe);
-        shopStorage.Cash += cash;
+        _shopStorage.Cash += cash;
         if (orderedQueue.Contains(client)) {
             orderedQueue.Remove(client);
         }

@@ -8,8 +8,9 @@ public class RecepeUI : StorageUI {
         if (Shop.Instance == null)
             return;
         UpdateBrainsValue(Shop.Instance.Recepe.Brains.Count);
-        UpdateBreadsValue(Shop.Instance.Recepe.Seasoning.Count);
+        UpdateSeasoningValue(Shop.Instance.Recepe.Seasoning.Count);
         UpdateDrinksValue(Shop.Instance.Recepe.Drinks.Count);
+        UpdateRecepePrice(Shop.Instance.Recepe.Price);
     }
 
 }//class

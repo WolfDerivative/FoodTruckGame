@@ -10,6 +10,7 @@ public class RecepeModifier : MonoBehaviour {
         Add("AddBrain");
         Add("AddBread");
         Add("AddDrink");
+        Add("AddPrice");
     }//Update
 
 
@@ -23,6 +24,7 @@ public class RecepeModifier : MonoBehaviour {
         if (AxisName.ToLower().Contains("brain")) Shop.Instance.Recepe.AddBrain(sign * 1);
         if (AxisName.ToLower().Contains("bread")) Shop.Instance.Recepe.AddSeasoning(sign * 1);
         if (AxisName.ToLower().Contains("drink")) Shop.Instance.Recepe.AddDrink(sign * 1);
+        if (AxisName.ToLower().Contains("price")) Shop.Instance.Recepe.AddPrice(sign * 1);
 
     }//Add
 

@@ -17,7 +17,8 @@ public class Thoughts: MonoBehaviour {
 
 
     public virtual void Start() {
-        _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        if (_spriteRenderer == null)
+            _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         vOriginPosition = this.transform.localPosition;
     }//Start
 
@@ -35,5 +36,10 @@ public class Thoughts: MonoBehaviour {
                 Debug.LogWarning("FoodThought set to True, but Sprite passed is null!");
         #endif
     }//SetIcon
+
+
+    public void OnEnable() {
+        Start();
+    }
 
 }//class

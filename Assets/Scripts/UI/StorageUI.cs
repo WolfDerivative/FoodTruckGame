@@ -3,20 +3,22 @@ using UnityEngine.UI;
 
 public class StorageUI : MonoBehaviour {
     
-    protected Text tBrainsText, tBreadsText, tDrinksText;
+    protected Text tBrainsText, tBreadsText, tDrinksText, tPriceText, tCashText;
+    protected Text[] _allTextInChild;
 
 
     public void Start() {
-
+        _allTextInChild = GetComponentsInChildren<Text>();
     }//Start
 
 
     public virtual void LateUpdate() {
-        if (Shop.Instance == null)
+        if (GameManager.Instance == null)
             return;
-        UpdateBrainsValue(Shop.Instance.shopStorage.Brains.Count);
-        UpdateBreadsValue(Shop.Instance.shopStorage.Breads.Count);
-        UpdateDrinksValue(Shop.Instance.shopStorage.Drinks.Count);
+        UpdateBrainsValue   (GameManager.Instance.GlobalStorage.Brains.Count);
+        UpdateSeasoningValue(GameManager.Instance.GlobalStorage.Seasonings.Count);
+        UpdateDrinksValue   (GameManager.Instance.GlobalStorage.Drinks.Count);
+        UpdateCashValue     (GameManager.Instance.GlobalStorage.Cash);
     }//LateUpdate
 
 
@@ -25,7 +27,7 @@ public class StorageUI : MonoBehaviour {
     /// </summary>
     /// <param name="amount">Value to be shown</param>
     public virtual void UpdateBrainsValue(int amount) {
-        if (!tBrainsText && !findTextObj(ref tBrainsText, "BrainsAmount"))
+        if (!tBrainsText && !findTextObj(ref tBrainsText, "BrainsValue"))
             return;
         tBrainsText.text = amount.ToString();
     }//ShowBrainsCount
@@ -35,8 +37,8 @@ public class StorageUI : MonoBehaviour {
     ///  Update value of the "Breads count" to be shown on the screen.
     /// </summary>
     /// <param name="amount">Value to be shown</param>
-    public virtual void UpdateBreadsValue(int amount) {
-        if (!tBreadsText && !findTextObj(ref tBreadsText, "BreadsAmount"))
+    public virtual void UpdateSeasoningValue(int amount) {
+        if (!tBreadsText && !findTextObj(ref tBreadsText, "SeasoningValue"))
             return;
         tBreadsText.text = amount.ToString();
     }//ShowBreadsCountTxt
@@ -47,14 +49,38 @@ public class StorageUI : MonoBehaviour {
     /// </summary>
     /// <param name="amount">Value to be shown</param>
     public virtual void UpdateDrinksValue(int amount) {
-        if (!tDrinksText && !findTextObj(ref tDrinksText, "DrinksAmount"))
+        if (!tDrinksText && !findTextObj(ref tDrinksText, "DrinksValue"))
             return;
         tDrinksText.text = amount.ToString();
     }//ShowDrinksCountTxt
 
 
+    /// <summary>
+    ///  Update value of the "Cash count" to be shown on the screen.
+    /// </summary>
+    /// <param name="amount">Value to be shown</param>
+    public virtual void UpdateCashValue(float amount) {
+        if (!tCashText && !findTextObj(ref tCashText, "CashValue"))
+            return;
+        tCashText.text = System.String.Format("${0:0.00}", amount);;
+    }//UpdateCashValue
+
+
+    /// <summary>
+    ///  Show price set for the recepe.
+    /// </summary>
+    /// <param name="amount">Value to be shown</param>
+    public virtual void UpdateRecepePrice(float amount) {
+        if (!tPriceText && !findTextObj(ref tPriceText, "RecepePrice"))
+            return;
+        tPriceText.text = amount.ToString();
+    }//ShowDrinksCountTxt
+
+
     protected bool findTextObj(ref Text textOjb, string objName) {
-        foreach(Transform child in this.transform) {
+        if (_allTextInChild == null)
+            _allTextInChild = GetComponentsInChildren<Text>();
+        foreach(Text child in _allTextInChild) {
             if (child.name.ToLower() != objName.ToLower())
                 continue;
             textOjb = child.GetComponent<Text>();

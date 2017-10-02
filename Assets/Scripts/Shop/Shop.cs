@@ -10,16 +10,17 @@ public class Shop : MonoBehaviour {
     [Range(0, 1)]public float ChanceOfAttraction = 0.5f;
     public int MaxOrders = 2;
     public int MaxPrepedFood = 2;
-    public List<BasicAI> WaitingQ       { get { return this.waitingQueue; } }
+    public List<BasicAI> WaitingQ   { get { return this.waitingQueue; } }
     public List<BasicAI> OrderedQ   { get { return this.orderedQueue; } }
 
     public List<BasicAI> waitingQueue;  //FIXME: make it private
     public List<BasicAI> orderedQueue;  //FIXME: make it private
     //public List<Food> FoodMenu;
-    public Recepe Recepe;
+    public Recepe RecepeToServe;
     
     protected Dictionary<BasicAI, Recepe> cooking;
     protected Storage _shopStorage;
+    protected bool bIsEnoughIngredients { get { return ValidateStockForRecepe(); } }
 
 
     /* ----------------------------------------------------------------------- */
@@ -63,11 +64,18 @@ public class Shop : MonoBehaviour {
         var client = waitingQueue[0];
         RemoveFromWaitQueue(client);
 
+        if (!bIsEnoughIngredients) {
+            client.DeclineService();
+            return;
+        }//if
+
+        _shopStorage.Substruct(RecepeToServe);
+
         orderedQueue.Add(client);
         //dispose food for the client if he ordered before, 
         //but food was not removed from the grill.
         DisposeCooked(client);
-        Recepe foodToCook = new Recepe();
+        Recepe foodToCook = new Recepe(RecepeToServe);
 
         cooking.Add(client, foodToCook);
     }//TakeOrder
@@ -108,6 +116,23 @@ public class Shop : MonoBehaviour {
 
 
     /// <summary>
+    ///  Check if there is enough ingredients in the storage to put an
+    /// order on the grill.
+    /// </summary>
+    /// <returns>True - life is good. False - not enough ingredients.</returns>
+    public bool ValidateStockForRecepe() {
+        if (_shopStorage.Brains.Count < RecepeToServe.Brains.Count)
+            return false;
+        if (_shopStorage.Seasonings.Count < RecepeToServe.Seasoning.Count)
+            return false;
+        if (_shopStorage.Drinks.Count < RecepeToServe.Seasoning.Count)
+            return false;
+
+        return true;
+    }//IsThereEnoughIngredients
+
+
+    /// <summary>
     ///  Remove food from the grill for the given client.
     /// </summary>
     /// <param name="ofClient"></param>
@@ -118,19 +143,10 @@ public class Shop : MonoBehaviour {
 
 
     /// <summary>
-    ///  Check if desiered food is in the shop's menu.
-    /// Return True if recepe exists. False = no such food.
+    ///  Return currently server by the shop recepe.
     /// </summary>
-    /// <param name="toFind">Food to find in the menu</param>
-    /// <returns></returns>
-    public bool CheckFoodInMenu(Recepe toFind) {
-        //FIXME
-        return true;
-    }//CheckFoodInMenu
-
-
-    public Recepe PickAnyFromMenu() {
-        return Recepe;
+    public Recepe GetRecepe() {
+        return RecepeToServe;
     }//PickAnyFromMenu
 
 
@@ -142,20 +158,21 @@ public class Shop : MonoBehaviour {
         if (pedestrian == null)
             return;
 
-        bool isPriceGood = District.Instance.TryAttactByPrice(Recepe.Price);
+        bool isPriceGood = District.Instance.TryAttactByPrice(RecepeToServe.Price);
 
         if (!isPriceGood) {
             Debug.Log("Bad Price!");
             return;
         }
 
+        /*
         bool isRecepeGood = District.Instance.TryAttractByRecepe(
-                            ref Recepe.Brains, ref Recepe.Seasoning, ref Recepe.Drinks);
+                            ref RecepeToServe.Brains, ref RecepeToServe.Seasoning, ref RecepeToServe.Drinks);
         if (!isRecepeGood) {
             Debug.Log("Bad Recepe!");
             return;
         }
-        
+        */
         pedestrian.SetState(BasicAI.StateMachine.standingInLine);
         waitingQueue.Add(pedestrian);
     }//OnTriggerEnter2D

@@ -62,7 +62,7 @@ public class StorageUI : MonoBehaviour {
     public virtual void UpdateCashValue(float amount) {
         if (!tCashText && !findTextObj(ref tCashText, "CashValue"))
             return;
-        tCashText.text = System.String.Format("${0:0.00}", amount);;
+        tCashText.text = System.String.Format("{0:0.00}", amount);;
     }//UpdateCashValue
 
 

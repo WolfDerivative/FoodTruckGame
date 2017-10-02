@@ -6,7 +6,6 @@ public class Recepe {
 
     public float CookTime   = 2;
 
-    public float currentCookingTime;
     public Sprite Icon;
     public string NameOnTheMenu = "Some Food";
 
@@ -15,6 +14,16 @@ public class Recepe {
     public Drink Drinks;
     [Tooltip("Price to sell this recepe for.")]
     public float Price = 5.0f;
+
+    private float currentCookingTime;
+
+
+    public Recepe(Recepe r) {
+        this.Brains = r.Brains;
+        this.Seasoning = r.Seasoning;
+        this.Drinks = r.Drinks;
+        this.Price = r.Price;
+    }//ctor
 
 
     /// <summary>

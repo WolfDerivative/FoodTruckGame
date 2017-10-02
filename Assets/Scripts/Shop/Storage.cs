@@ -3,7 +3,7 @@
 [System.Serializable]
 public class Storage {
 
-    public enum Type { Brains, Seasonings, Drinks }
+    public enum StorageType { Brains, Seasonings, Drinks }
 
     public float Cash;
     public Brain Brains;
@@ -11,13 +11,13 @@ public class Storage {
     public Drink Drinks;
 
 
-    public Ingredient ObjectFromType(Type t){
+    public Ingredient ObjectFromType(StorageType t){
         switch (t) {
-            case (Type.Brains):
+            case (StorageType.Brains):
                 return Brains;
-            case (Type.Seasonings):
+            case (StorageType.Seasonings):
                 return Seasonings;
-            case (Type.Drinks):
+            case (StorageType.Drinks):
                 return Drinks;
             default:
                 return null;
@@ -29,5 +29,11 @@ public class Storage {
         Cash -= amount;
     }//ReduceCash
 
+
+    public void Substruct(Recepe r) {
+        Brains.Subtract(r.Brains.Count);
+        Seasonings.Subtract(r.Seasoning.Count);
+        Drinks.Subtract(r.Drinks.Count);
+    }//TakeIngredients
 
 }//class

@@ -6,11 +6,11 @@ public class GameManager : MonoBehaviour {
     public static GameManager Instance;
 
     public Storage GlobalStorage;
+    public GameObject FloatingTextPrefab;
 
 
     public void Start() {
         Instance = this;
-        DontDestroyOnLoad(this.gameObject);
     }//Start
 
 }//class

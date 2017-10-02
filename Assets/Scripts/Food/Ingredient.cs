@@ -19,6 +19,11 @@ public class Ingredient {
     }//Add
 
 
+    public void Subtract(int amount) {
+        Add(-amount);
+    }//Subtract
+
+
     public void Reset() {
         Count = 0;
     }//Reset

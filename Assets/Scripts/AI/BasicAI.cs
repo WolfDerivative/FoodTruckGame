@@ -77,7 +77,7 @@ public class BasicAI : MonoBehaviour {
         if (currentWaitTime >= waitTime) {
             this.eState = StateMachine.walking;
             waitTime = currentWaitTime = 0;
-            _thoughtsProcessor.ShowFeedback(FeedbackThoughts.Feedbacks.Angry, true);
+            _thoughtsProcessor.ShowFeedback(-1, true);
             _shop.RemoveFromWaitQueue(this);
         }
 
@@ -94,23 +94,40 @@ public class BasicAI : MonoBehaviour {
     }//WaitingForOrderState
 
 
+    public void DeclineService() {
+        _thoughtsProcessor.ShowFeedback(-1, true);
+        eState = StateMachine.walking;
+    }//DeclineService
+
+
+
     /// <summary>
     ///  Return a Food object to be cooked for this client.
     /// </summary>
     /// <returns></returns>
-    public Recepe GetOrder() {
+    public Recepe TakeOrder() {
         this.eState = StateMachine.waitingForOrder;
         _thoughtsProcessor.ShowFoodChoice(foodToOrder.Icon, true);
         return foodToOrder;
     }//Order
 
 
-    public float RecieveOrder(Recepe toRecieve) {
+    public float RecieveOrder(Recepe order) {
         this.eState = StateMachine.walking;
 
-        _thoughtsProcessor.ShowFeedback(FeedbackThoughts.Feedbacks.Happy, true);
         //TODO: calculate satisfaction value and tip percent
-        return 1;
+        float satisfaction = District.Instance.GetSatisfactionRatio(order, currentWaitTime);
+        _thoughtsProcessor.ShowFeedback(satisfaction, true);
+        float tipAmount = (satisfaction / 100) * order.Price;
+
+        //Show tip amount as a floating text object
+        if(GameManager.Instance.FloatingTextPrefab != null) {
+            var floatingTextGO = Instantiate(GameManager.Instance.FloatingTextPrefab);
+            var floatingTextCmp = floatingTextGO.GetComponent<FloatingText>();
+            floatingTextCmp.ShowText(satisfaction + "! $" + tipAmount, this.transform.position);
+        }//if floating text
+
+        return (float)System.Math.Round(order.Price + tipAmount, 2);
     }//RecieveOrder
 
 
@@ -128,13 +145,13 @@ public class BasicAI : MonoBehaviour {
     public void SetState(StateMachine newState) {
         eState = newState;
         if(eState == StateMachine.standingInLine) {
-            foodToOrder = (FoodPref.Length == 0) ?_shop.PickAnyFromMenu() : foodToOrder = pickFoodFromPrefs();
-            if (foodToOrder == null) {
+            foodToOrder = _shop.GetRecepe();
+            if (foodToOrder == null) {      //PARANOIA??? Why would that ever happened.
                 eState = StateMachine.walking;
                 return;
             }
             waitTime = Random.Range(MaxWaitingTime.x, MaxWaitingTime.y);
-        }
+        }//if standing in line
     }//SetState
 
 
@@ -159,16 +176,6 @@ public class BasicAI : MonoBehaviour {
         }
         this.transform.position = spawnPosition;
     }//Reset
-
-
-    protected Recepe pickFoodFromPrefs() {
-        foreach(Recepe choice in FoodPref) {
-            if (!_shop.CheckFoodInMenu(choice))
-                continue;
-            return choice;
-        }
-        return null;
-    }//pickFoodFromPrefs
 
 
     public void OnEnable() {

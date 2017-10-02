@@ -46,14 +46,25 @@ public class ThoughtProcessor : Thoughts {
     }//ShowThoughts
 
 
-    public void ShowFeedback(FeedbackThoughts.Feedbacks feedbackType, bool state) {
+    public void ShowFeedback(float rating, bool state) {
         _foodThoughts.Hide();
         _actionThoughts.Hide();
 
-        _feedbackThoughts.SetIcon(feedbackType, state);
+        _feedbackThoughts.SetIcon(FeedbackByRating(rating), state);
         if (state && !_spriteRenderer.enabled)
             _spriteRenderer.enabled = true;
     }//ShowFeedback
+
+    
+    public FeedbackThoughts.Feedbacks FeedbackByRating(float rating) {
+        if (rating <= 3)
+            return FeedbackThoughts.Feedbacks.Sad;
+        if(rating > 3 && rating <= 6)
+            return FeedbackThoughts.Feedbacks.Neutral;
+        if(rating > 6)
+            return FeedbackThoughts.Feedbacks.Happy;
+        return FeedbackThoughts.Feedbacks.Angry;
+    }//FeedbackByRating
 
 
     public void HideAll() {

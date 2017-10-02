@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class Market: MonoBehaviour {
 
-    public Storage.Type MarketType;
+    public Storage.StorageType MarketType;
     [Tooltip("Price for One unit of the merchandise.")]
     public float  PricePerUnit      = 1.0f;
     [Tooltip("How much units to add per button click.")]
@@ -11,6 +11,7 @@ public class Market: MonoBehaviour {
     public string GONameSubstruct   = "Substruct";
     public string GONameValue       = "Value";
     public string GONameAdd         = "Add";
+    public string GONamePrice       = "Price";
     public string GONameCheckoutBtn = "CheckoutBtn";
 
     /// <summary>
@@ -31,7 +32,7 @@ public class Market: MonoBehaviour {
     
     protected MarketCheckout _checkout;
     protected Button bAdd, bSubstruct;
-    protected Text   tValue;
+    protected Text   tValue, tPrice;
 
 
     /* *********************************************************************** */
@@ -42,7 +43,10 @@ public class Market: MonoBehaviour {
             if (go.name == GONameAdd)       SetBtn(go.gameObject, ref bAdd);
             if (go.name == GONameSubstruct) SetBtn(go.gameObject, ref bSubstruct);
             if (go.name == GONameValue)     SetTxt(go.gameObject, ref tValue);
+            if (go.name == GONamePrice)     SetTxt(go.gameObject, ref tPrice);
         }//foreach
+
+        tPrice.text = "$" + PricePerUnit;
 
         //Checkout button is on the same hierarchy level as This game object.
         //Therefore, step up to parent and search from there.

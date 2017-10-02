@@ -4,6 +4,8 @@ using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour {
 
+    public static UIManager Instance;
+
 
     public UIGroup[] UIGroups = new UIGroup[] {
         new UIGroup("MainMenu"),
@@ -12,6 +14,8 @@ public class UIManager : MonoBehaviour {
 
 
     public void OnEnable() {
+        if (Instance == null)
+            Instance = this;
         SceneManager.sceneLoaded += OnSceneLoaded;
     }//OnEnable
 

@@ -50,15 +50,15 @@ public class MarketCheckout : MonoBehaviour {
         for (int i = 0; i < _allMarkets.Length; i++) {
             Market marketObj = _allMarkets[i];
             switch (marketObj.MarketType) {
-                case (Storage.Type.Brains):
+                case (Storage.StorageType.Brains):
                     GameManager.Instance.GlobalStorage.Brains.Add(marketObj.ShopingCart);
                     marketObj.Reset();
                     continue;
-                case (Storage.Type.Seasonings):
+                case (Storage.StorageType.Seasonings):
                     GameManager.Instance.GlobalStorage.Seasonings.Add(marketObj.ShopingCart);
                     marketObj.Reset();
                     continue;
-                case (Storage.Type.Drinks):
+                case (Storage.StorageType.Drinks):
                     GameManager.Instance.GlobalStorage.Drinks.Add(marketObj.ShopingCart);
                     marketObj.Reset();
                     continue;

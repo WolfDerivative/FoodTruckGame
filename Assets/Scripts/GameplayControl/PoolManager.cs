@@ -1,14 +1,18 @@
 ﻿using UnityEngine;
 
 
-public class RandomPoolSpawn : MonoBehaviour {
+public class PoolManager: MonoBehaviour {
+
+    public static PoolManager Instance;
+    public bool IsAtLeastOneActive { get { return this.checkAtLeastOneActive(); } }
 
     protected ObjectPool[] _pools;
 
 
     public void Start() {
+        Instance = this;
         _pools = GetComponentsInChildren<ObjectPool>();
-        InvokeRepeating("PickFromPool", 0, 1.0f);
+        //InvokeRepeating("PickFromPool", 0, 1.0f);
     }//Start
 
 
@@ -31,5 +35,14 @@ public class RandomPoolSpawn : MonoBehaviour {
 
         return go;
     }//PickFromPool
+
+
+    private bool checkAtLeastOneActive() {
+        for(int i=0; i < _pools.Length; i++) {
+            if (_pools[i].ActiveCount > 0)
+                return false;
+        }//for
+        return true;
+    }//checkAtLeastOneActive
 
 }//class

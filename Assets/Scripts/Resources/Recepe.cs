@@ -2,27 +2,19 @@
 using UnityEngine;
 
 [System.Serializable]
-public class Recepe {
+public class Recepe : Resources{
 
     public float CookTime   = 2;
-
     public Sprite Icon;
-    public string NameOnTheMenu = "Some Food";
-
-    public Brain Brains;
-    public Seasoning Seasoning;
-    public Drink Drinks;
-    [Tooltip("Price to sell this recepe for.")]
-    public float Price = 5.0f;
 
     private float currentCookingTime;
 
 
     public Recepe(Recepe r) {
         this.Brains = r.Brains;
-        this.Seasoning = r.Seasoning;
+        this.Seasonings = r.Seasonings;
         this.Drinks = r.Drinks;
-        this.Price = r.Price;
+        this.Cash = r.Cash;
     }//ctor
 
 
@@ -49,7 +41,7 @@ public class Recepe {
 
 
     public void AddSeasoning(int amount) {
-        Seasoning.Add(amount);
+        Seasonings.Add(amount);
     }//AddBrain
 
 
@@ -58,10 +50,8 @@ public class Recepe {
     }//AddBrain
 
 
-    public void AddPrice(int amount) {
-        Price += amount;
-        if (Price < 0)
-            Price = 0;
+    public void AddPrice(float amount) {
+        this.Cash.Add(amount);
     }//AddPrice
 
 }//class

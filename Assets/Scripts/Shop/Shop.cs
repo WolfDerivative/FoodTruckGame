@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-[RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(BoxCollider2D), typeof(SpriteRenderer))]
 public class Shop : MonoBehaviour {
 
     public static Shop Instance;
@@ -17,7 +18,9 @@ public class Shop : MonoBehaviour {
     public List<BasicAI> orderedQueue;  //FIXME: make it private
     //public List<Food> FoodMenu;
     public Recepe RecepeToServe;
-    
+
+    protected SpriteRenderer _spriteRenderer;
+    protected BoxCollider2D _boxCollider;
     protected Dictionary<BasicAI, Recepe> cooking;
     protected Storage _shopStorage;
     protected bool bIsEnoughIngredients { get { return ValidateStockForRecepe(); } }
@@ -28,13 +31,20 @@ public class Shop : MonoBehaviour {
 
     public void Start() {
         Instance        = this;
+        this.initComponents();
         waitingQueue    = new List<BasicAI>();
         orderedQueue    = new List<BasicAI>();
         cooking         = new Dictionary<BasicAI, Recepe>();
         _shopStorage    = GameManager.Instance.GlobalStorage;
-
-        DontDestroyOnLoad(this.gameObject);
     }//Start
+
+
+    private void initComponents() {
+        if (_spriteRenderer == null)
+            _spriteRenderer = GetComponent<SpriteRenderer>();
+        if (_boxCollider == null)
+            _boxCollider = GetComponent<BoxCollider2D>();
+    }//InitComponents
 
 
     public void Update() {
@@ -42,7 +52,6 @@ public class Shop : MonoBehaviour {
             TakeOrder();
         CookAndServe();
     }//Update
-
 
 
     public void RemoveFromWaitQueue(BasicAI pedestrian) {
@@ -83,7 +92,7 @@ public class Shop : MonoBehaviour {
 
     public void ServeClient(BasicAI client, Recepe toServe) {
         float cash = client.RecieveOrder(toServe);
-        _shopStorage.Cash += cash;
+        _shopStorage.Cash.Add(cash);
         if (orderedQueue.Contains(client)) {
             orderedQueue.Remove(client);
         }
@@ -123,9 +132,9 @@ public class Shop : MonoBehaviour {
     public bool ValidateStockForRecepe() {
         if (_shopStorage.Brains.Count < RecepeToServe.Brains.Count)
             return false;
-        if (_shopStorage.Seasonings.Count < RecepeToServe.Seasoning.Count)
+        if (_shopStorage.Seasonings.Count < RecepeToServe.Seasonings.Count)
             return false;
-        if (_shopStorage.Drinks.Count < RecepeToServe.Seasoning.Count)
+        if (_shopStorage.Drinks.Count < RecepeToServe.Seasonings.Count)
             return false;
 
         return true;
@@ -158,23 +167,37 @@ public class Shop : MonoBehaviour {
         if (pedestrian == null)
             return;
 
-        bool isPriceGood = District.Instance.TryAttactByPrice(RecepeToServe.Price);
+        bool isPriceGood = District.Instance.TryAttactByPrice(RecepeToServe.Cash.Value);
 
         if (!isPriceGood) {
             Debug.Log("Bad Price!");
             return;
         }
 
-        /*
-        bool isRecepeGood = District.Instance.TryAttractByRecepe(
-                            ref RecepeToServe.Brains, ref RecepeToServe.Seasoning, ref RecepeToServe.Drinks);
-        if (!isRecepeGood) {
-            Debug.Log("Bad Recepe!");
-            return;
-        }
-        */
         pedestrian.SetState(BasicAI.StateMachine.standingInLine);
         waitingQueue.Add(pedestrian);
     }//OnTriggerEnter2D
+
+
+    public void OnEnable() {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    public void OnDisable() {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }//OnDisable
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+        this.initComponents();
+        var activeScene = SceneManager.GetActiveScene();
+
+        if (activeScene.buildIndex != 0) {
+            _spriteRenderer.enabled = true;
+            _boxCollider.enabled    = true;
+        } else {
+            _spriteRenderer.enabled = false;
+            _boxCollider.enabled    = false;
+        }//if-else
+    }//OnSceneLoaded
 
 }//class

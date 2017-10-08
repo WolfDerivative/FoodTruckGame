@@ -21,10 +21,14 @@ public class RecepeModifier : MonoBehaviour {
         if (!isKeyDown)
             return;
 
-        if (AxisName.ToLower().Contains("brain")) Shop.Instance.RecepeToServe.AddBrain(sign * 1);
-        if (AxisName.ToLower().Contains("bread")) Shop.Instance.RecepeToServe.AddSeasoning(sign * 1);
-        if (AxisName.ToLower().Contains("drink")) Shop.Instance.RecepeToServe.AddDrink(sign * 1);
-        if (AxisName.ToLower().Contains("price")) Shop.Instance.RecepeToServe.AddPrice(sign * 1);
+        if (AxisName.ToLower().Contains("brain"))
+            Shop.Instance.RecepeToServe.Add(sign * 1, Resources.ResourceType.Brains);
+        if (AxisName.ToLower().Contains("bread"))
+            Shop.Instance.RecepeToServe.Add(sign * 1, Resources.ResourceType.Seasonings);
+        if (AxisName.ToLower().Contains("drink"))
+            Shop.Instance.RecepeToServe.Add(sign * 1, Resources.ResourceType.Drinks);
+        if (AxisName.ToLower().Contains("price"))
+            Shop.Instance.RecepeToServe.Add(sign * 1, Resources.ResourceType.Money);
 
     }//Add
 

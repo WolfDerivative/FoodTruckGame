@@ -60,7 +60,7 @@ public class District: MonoBehaviour {
     public float GetSatisfactionRatio(Recepe received, float timeWaited) {
         float total = 0;
         total += BrainsRating.RatioByRange(RecepePref.BrainsRange, received.Brains.Count);
-        total += SeasoningsRating.RatioByRange(RecepePref.SeasoningRange, received.Seasoning.Count);
+        total += SeasoningsRating.RatioByRange(RecepePref.SeasoningRange, received.Seasonings.Count);
         total += DrinksRating.RatioByRange(RecepePref.DrinksRange, received.Drinks.Count);
 
         //float maxPrice = (PricePref.Price * PricePref.SatisfactionSwing) + PricePref.Price;

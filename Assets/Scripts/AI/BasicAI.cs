@@ -118,7 +118,7 @@ public class BasicAI : MonoBehaviour {
         //TODO: calculate satisfaction value and tip percent
         float satisfaction = District.Instance.GetSatisfactionRatio(order, currentWaitTime);
         _thoughtsProcessor.ShowFeedback(satisfaction, true);
-        float tipAmount = (satisfaction / 100) * order.Price;
+        float tipAmount = (satisfaction / 100) * order.Cash.Value;
 
         //Show tip amount as a floating text object
         if(GameManager.Instance.FloatingTextPrefab != null) {
@@ -127,7 +127,7 @@ public class BasicAI : MonoBehaviour {
             floatingTextCmp.ShowText(satisfaction + "! $" + tipAmount, this.transform.position);
         }//if floating text
 
-        return (float)System.Math.Round(order.Price + tipAmount, 2);
+        return (float)System.Math.Round(order.Cash.Value + tipAmount, 2);
     }//RecieveOrder
 
 

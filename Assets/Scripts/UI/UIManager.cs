@@ -20,7 +20,7 @@ public class UIManager : MonoBehaviour {
     }//OnEnable
 
 
-    void OnDisable() {
+    public void OnDisable() {
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }//OnDisable
 

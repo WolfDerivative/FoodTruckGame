@@ -46,20 +46,20 @@ public class MarketCheckout : MonoBehaviour {
 
 
     public void Checkout() {
-        GameManager.Instance.GlobalStorage.ReduceCash(TotalPrice); 
+        GameManager.Instance.GlobalStorage.Cash.Substruct(TotalPrice); 
         for (int i = 0; i < _allMarkets.Length; i++) {
             Market marketObj = _allMarkets[i];
-            switch (marketObj.MarketType) {
-                case (Storage.StorageType.Brains):
-                    GameManager.Instance.GlobalStorage.Brains.Add(marketObj.ShopingCart);
+            switch (marketObj.ModType) {
+                case (Storage.ResourceType.Brains):
+                    GameManager.Instance.GlobalStorage.Brains.Add(marketObj.CurrentValue);
                     marketObj.Reset();
                     continue;
-                case (Storage.StorageType.Seasonings):
-                    GameManager.Instance.GlobalStorage.Seasonings.Add(marketObj.ShopingCart);
+                case (Storage.ResourceType.Seasonings):
+                    GameManager.Instance.GlobalStorage.Seasonings.Add(marketObj.CurrentValue);
                     marketObj.Reset();
                     continue;
-                case (Storage.StorageType.Drinks):
-                    GameManager.Instance.GlobalStorage.Drinks.Add(marketObj.ShopingCart);
+                case (Storage.ResourceType.Drinks):
+                    GameManager.Instance.GlobalStorage.Drinks.Add(marketObj.CurrentValue);
                     marketObj.Reset();
                     continue;
             }//switch

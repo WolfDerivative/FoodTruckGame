@@ -10,7 +10,10 @@ public class GameManager : MonoBehaviour {
 
 
     public void Start() {
-        Instance = this;
+        if (Instance == null)
+            Instance = this;
+        else
+            DestroyImmediate(this.gameObject); //To ensure only one copy exists.
     }//Start
 
 }//class

@@ -115,6 +115,8 @@
     <Compile Include="Assets\Scripts\UI\ResourceModifier.cs" />
     <Compile Include="Assets\Scripts\UI\StorageUI.cs" />
     <Compile Include="Assets\Scripts\UI\UIManager.cs" />
+    <Compile Include="Assets\Scripts\UI\UIMenuPopups\UILevelComplete.cs" />
+    <Compile Include="Assets\Scripts\UI\UIMenuPopups\UIMenuPopup.cs" />
     <Compile Include="Assets\Scripts\UI\UINavigation.cs" />
     <Compile Include="Assets\Scripts\Utils\FloatingText.cs" />
     <Compile Include="Assets\Scripts\Utils\TextToWorld.cs" />

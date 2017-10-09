@@ -7,6 +7,14 @@ public class UIManager : MonoBehaviour {
     public static UIManager Instance;
 
 
+    public void Start() {
+        if (Instance == null)
+            Instance = this;
+        else
+            DestroyImmediate(this.gameObject); //To ensure only one copy exists.
+    }//Start
+
+
     public UIGroup[] UIGroups = new UIGroup[] {
         new UIGroup("MainMenu"),
         new UIGroup("lvl_")
@@ -14,8 +22,6 @@ public class UIManager : MonoBehaviour {
 
 
     public void OnEnable() {
-        if (Instance == null)
-            Instance = this;
         SceneManager.sceneLoaded += OnSceneLoaded;
     }//OnEnable
 

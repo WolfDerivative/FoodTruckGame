@@ -2,8 +2,9 @@
 
 
 public class LookAlive : MonoBehaviour {
-
+    
     public void Start() {
-        DontDestroyOnLoad(this.gameObject);
-    }
+        DontDestroyOnLoad(this);
+    }//Awake
+
 }//class

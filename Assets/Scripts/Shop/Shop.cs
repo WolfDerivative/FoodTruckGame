@@ -167,7 +167,7 @@ public class Shop : MonoBehaviour {
         if (pedestrian == null)
             return;
 
-        bool isPriceGood = District.Instance.TryAttactByPrice(RecepeToServe.Cash.Value);
+        bool isPriceGood = District.Instance.TryAttactByPrice(RecepeToServe.Cash.Count);
 
         if (!isPriceGood) {
             Debug.Log("Bad Price!");

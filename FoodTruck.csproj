@@ -78,10 +78,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\AI\BasicAI.cs" />
     <Compile Include="Assets\Scripts\Controls\CollisionDetection.cs" />
     <Compile Include="Assets\Scripts\Controls\JumpControls.cs" />
     <Compile Include="Assets\Scripts\Controls\PlatformerControls2d.cs" />
+    <Compile Include="Assets\Scripts\Customers\BasicAI.cs" />
+    <Compile Include="Assets\Scripts\Customers\Ratings\ConsumerRating.cs" />
+    <Compile Include="Assets\Scripts\Customers\Ratings\Rating.cs" />
+    <Compile Include="Assets\Scripts\Customers\Ratings\ServicePreference.cs" />
+    <Compile Include="Assets\Scripts\Customers\Thoughts\ActionThoughts.cs" />
+    <Compile Include="Assets\Scripts\Customers\Thoughts\FeedbackThoughts.cs" />
+    <Compile Include="Assets\Scripts\Customers\Thoughts\FoodThoughts.cs" />
+    <Compile Include="Assets\Scripts\Customers\Thoughts\ThoughtProcessor.cs" />
+    <Compile Include="Assets\Scripts\Customers\Thoughts\Thoughts.cs" />
     <Compile Include="Assets\Scripts\GameplayControl\ObjectPool.cs" />
     <Compile Include="Assets\Scripts\GameplayControl\PoolManager.cs" />
     <Compile Include="Assets\Scripts\GameplayControl\Wave.cs" />
@@ -89,12 +97,8 @@
     <Compile Include="Assets\Scripts\LevelManagement\District.cs" />
     <Compile Include="Assets\Scripts\LevelManagement\GameManager.cs" />
     <Compile Include="Assets\Scripts\LevelManagement\LevelManager.cs" />
+    <Compile Include="Assets\Scripts\LevelManagement\LevelStats.cs" />
     <Compile Include="Assets\Scripts\LookAlive.cs" />
-    <Compile Include="Assets\Scripts\Other\ActionThoughts.cs" />
-    <Compile Include="Assets\Scripts\Other\FeedbackThoughts.cs" />
-    <Compile Include="Assets\Scripts\Other\FoodThoughts.cs" />
-    <Compile Include="Assets\Scripts\Other\ThoughtProcessor.cs" />
-    <Compile Include="Assets\Scripts\Other\Thoughts.cs" />
     <Compile Include="Assets\Scripts\Resources\Ingredient.cs" />
     <Compile Include="Assets\Scripts\Resources\Ingredients\Brain.cs" />
     <Compile Include="Assets\Scripts\Resources\Ingredients\Bread.cs" />

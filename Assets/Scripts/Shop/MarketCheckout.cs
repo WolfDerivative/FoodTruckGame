@@ -46,7 +46,7 @@ public class MarketCheckout : MonoBehaviour {
 
 
     public void Checkout() {
-        GameManager.Instance.GlobalStorage.Cash.Substruct(TotalPrice); 
+        GameManager.Instance.GlobalStorage.Cash.Subtract(TotalPrice);
         for (int i = 0; i < _allMarkets.Length; i++) {
             Market marketObj = _allMarkets[i];
             switch (marketObj.ModType) {

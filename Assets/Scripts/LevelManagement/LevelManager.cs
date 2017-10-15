@@ -38,4 +38,8 @@ public class LevelManager : MonoBehaviour {
         return true;
     }//checkLevelComplete
 
+
+    public int GetTotalSpawns() {
+        return _wave.TotalSpanws();
+    }//TotalSpawns
 }//class

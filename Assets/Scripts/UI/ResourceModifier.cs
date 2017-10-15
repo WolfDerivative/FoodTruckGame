@@ -6,16 +6,21 @@ public class ResourceModifier : MonoBehaviour {
     [Tooltip("Type of resource that is being modified by this object.")]
     public Storage.ResourceType ModType;
     [Tooltip("How much units to add per button click.")]
-    public int    UnitsPerPurchase  = 3;
+    public float  UnitsPerPurchase  = 3;
     public string GONameSubstruct   = "Substruct";
     [Tooltip("Object for the display value.")]
     public string GONameValue       = "Value";
     public string GONameAdd         = "Add";
 
 
-    public int CurrentValue {
+    public float CurrentValue {
         get {
-            int val = int.Parse(tValue.text);
+            var splited_text = tValue.text.Split('$');
+            float val = 0;
+            if (splited_text.Length > 1)
+                float.TryParse(splited_text[1], out val);
+            else
+                float.TryParse(splited_text[0], out val);
             return val;
         }//get
     }//UnitsToPurchase
@@ -52,14 +57,14 @@ public class ResourceModifier : MonoBehaviour {
     ///  Add number of Units to the "Value" text GO.
     /// </summary>
     /// <returns>The amount of units that were added.</returns>
-    public virtual int Add(int amount = int.MaxValue) {
-        if (amount == int.MaxValue)
+    public virtual float Add(float amount = float.NegativeInfinity) {
+        if (amount == float.NegativeInfinity)
             amount = this.UnitsPerPurchase;
         //How many units can be added to reach allowed Max.
-        int valueLimit = IngredientType.Max - IngredientType.Count;
+        float valueLimit = IngredientType.Max - IngredientType.Count;
         //Number of units potentially extending the limit.
-        int limitOverflow = this.CurrentValue + amount;
-        int unitsToAdd = (limitOverflow > valueLimit) ? limitOverflow - valueLimit : amount;
+        float limitOverflow = this.CurrentValue + amount;
+        float unitsToAdd = (limitOverflow > valueLimit) ? limitOverflow - valueLimit : amount;
 
         return unitsToAdd;
     }//Add
@@ -70,15 +75,15 @@ public class ResourceModifier : MonoBehaviour {
     /// </summary>
     /// <param name="amount">default = 1</param>
     /// <returns>The amount of units to be substructed.</returns>
-    public virtual int Substruct(int amount = int.MinValue) {
-        if (amount == int.MinValue) {
+    public virtual float Substruct(float amount = float.NegativeInfinity) {
+        if (amount == float.NegativeInfinity) {
             amount = this.UnitsPerPurchase;
             //override amount regardless of the default units count
             if (this.CurrentValue % UnitsPerPurchase != 0)
                 amount = this.CurrentValue % UnitsPerPurchase;
         }//if amount
-        
-        int toSubstruct = (this.CurrentValue - amount) < 0 ? this.CurrentValue : amount;
+
+        float toSubstruct = (this.CurrentValue - amount) < 0 ? this.CurrentValue : amount;
 
         return toSubstruct;
     }//Substruct

@@ -115,4 +115,14 @@ public class Wave : MonoBehaviour {
         _poolManager.PickFromPool();
     }//Spawn
 
+
+    public int TotalSpanws() {
+        int total = 0;
+        for(int i=0; i < Progression.Rate.keys.Length; i++) {
+            Keyframe key = Progression.Rate.keys[i];
+            if (key.value > 0)
+                total += Mathf.FloorToInt(key.value);
+        }//for
+        return total;
+    }//TotalSpawns
 }//Wave

@@ -27,10 +27,10 @@ public class Market: ResourceModifier {
     }//Start
 
 
-    public override int Add(int amount = int.MaxValue) {
-        int toBuy = base.Add(amount);
- 
-        float availableCash = GameManager.Instance.GlobalStorage.Cash.Value - _checkout.TotalPrice;
+    public override float Add(float amount = float.NegativeInfinity) {
+        float toBuy = base.Add(amount);
+
+        float availableCash = GameManager.Instance.GlobalStorage.Cash.Count - _checkout.TotalPrice;
         UnitsToCashAdjustment(ref toBuy, PricePerUnit, availableCash);
         float price = toBuy * PricePerUnit;
 
@@ -40,8 +40,8 @@ public class Market: ResourceModifier {
     }//Add
 
 
-    public override int Substruct(int amount = int.MinValue) {
-        int toSubstruct = base.Substruct(amount);
+    public override float Substruct(float amount = float.NegativeInfinity) {
+        float toSubstruct = base.Substruct(amount);
 
         _checkout.Substruct(toSubstruct * PricePerUnit);      //update total checkout price
         tValue.text = (this.CurrentValue - toSubstruct).ToString(); //update merchandise units
@@ -55,7 +55,7 @@ public class Market: ResourceModifier {
     /// <param name="units">Units wanted to be bought.</param>
     /// <param name="price">Price per one unit.</param>
     /// <param name="availableCash">Cash in the bank available to spend.</param>
-    public void UnitsToCashAdjustment(ref int units, float price, float availableCash) {
+    public void UnitsToCashAdjustment(ref float units, float price, float availableCash) {
         float totalPrice = units * price;
         if (totalPrice < availableCash) //have enough cash to buy given units amount
             return;

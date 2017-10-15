@@ -18,7 +18,7 @@ public class StorageUI : MonoBehaviour {
         UpdateBrainsValue   (GameManager.Instance.GlobalStorage.Brains.Count);
         UpdateSeasoningValue(GameManager.Instance.GlobalStorage.Seasonings.Count);
         UpdateDrinksValue   (GameManager.Instance.GlobalStorage.Drinks.Count);
-        UpdateCashValue     (GameManager.Instance.GlobalStorage.Cash.Value);
+        UpdateCashValue     (GameManager.Instance.GlobalStorage.Cash.Count);
     }//LateUpdate
 
 
@@ -26,7 +26,7 @@ public class StorageUI : MonoBehaviour {
     ///  Update value of the "Brains count" to be shown on the screen.
     /// </summary>
     /// <param name="amount">Value to be shown</param>
-    public virtual void UpdateBrainsValue(int amount) {
+    public virtual void UpdateBrainsValue(float amount) {
         if (!tBrainsText && !findTextObj(ref tBrainsText, "BrainsValue"))
             return;
         tBrainsText.text = amount.ToString();
@@ -37,7 +37,7 @@ public class StorageUI : MonoBehaviour {
     ///  Update value of the "Breads count" to be shown on the screen.
     /// </summary>
     /// <param name="amount">Value to be shown</param>
-    public virtual void UpdateSeasoningValue(int amount) {
+    public virtual void UpdateSeasoningValue(float amount) {
         if (!tBreadsText && !findTextObj(ref tBreadsText, "SeasoningsValue"))
             return;
         tBreadsText.text = amount.ToString();
@@ -48,7 +48,7 @@ public class StorageUI : MonoBehaviour {
     ///  Update value of the "Drinks count" to be shown on the screen.
     /// </summary>
     /// <param name="amount">Value to be shown</param>
-    public virtual void UpdateDrinksValue(int amount) {
+    public virtual void UpdateDrinksValue(float amount) {
         if (!tDrinksText && !findTextObj(ref tDrinksText, "DrinksValue"))
             return;
         tDrinksText.text = amount.ToString();

@@ -2,8 +2,8 @@
 
 public class RecepeCraft : ResourceModifier {
 
-    public override int Add(int amount = int.MaxValue) {
-        int unitsToAdd = base.Add(amount);
+    public override float Add(float amount = float.NegativeInfinity) {
+        float unitsToAdd = base.Add(amount);
         //update cuurent value units
         tValue.text = (unitsToAdd + this.CurrentValue).ToString();
         Shop.Instance.RecepeToServe.Add(unitsToAdd, ModType);
@@ -11,8 +11,8 @@ public class RecepeCraft : ResourceModifier {
     }//Add
 
 
-    public override int Substruct(int amount = int.MinValue) {
-        int toSubstruct = base.Substruct(amount);
+    public override float Substruct(float amount = float.NegativeInfinity) {
+        float toSubstruct = base.Substruct(amount);
         //update cuurent value units
         tValue.text = (this.CurrentValue - toSubstruct).ToString();
         Shop.Instance.RecepeToServe.Substruct(toSubstruct, ModType);

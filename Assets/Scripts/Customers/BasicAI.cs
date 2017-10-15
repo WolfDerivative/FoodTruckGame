@@ -7,8 +7,6 @@ public class BasicAI : MonoBehaviour {
     public enum StateMachine { walking, movingToQueue, standingInLine, waitingForOrder }
     public float    Speed = 0.4f;
     public Vector2  SpeedRange = new Vector2(6f, 7f);
-    [Tooltip("Random time between X and Y this pedestrian will wait in line.")]
-    public Vector2  MaxWaitingTime = new Vector2(1, 2);
     public Vector2  VelocityRange  = new Vector2(0.2f, 1.0f);
     public Vector2  velocity;
     public string   POIName = "FoodTruck";
@@ -25,6 +23,10 @@ public class BasicAI : MonoBehaviour {
     protected Shop                  _shop; //point of interest
     protected ThoughtProcessor      _thoughtsProcessor;
     protected Recepe                 foodToOrder;
+    protected ConsumerRating        _serviceFeedback;
+
+    //Random time between X and Y this pedestrian will wait in line.
+    private Vector2  maxWaitTime;
 
 
     void Start () {
@@ -33,6 +35,7 @@ public class BasicAI : MonoBehaviour {
         leftWall    = GameObject.Find("leftWall");
         rightWall   = GameObject.Find("rightWall");
         _thoughtsProcessor   = GetComponentInChildren<ThoughtProcessor>();
+        _serviceFeedback = null;
 
         Respawn();
     }//start
@@ -100,7 +103,6 @@ public class BasicAI : MonoBehaviour {
     }//DeclineService
 
 
-
     /// <summary>
     ///  Return a Food object to be cooked for this client.
     /// </summary>
@@ -115,10 +117,10 @@ public class BasicAI : MonoBehaviour {
     public float RecieveOrder(Recepe order) {
         this.eState = StateMachine.walking;
 
-        //TODO: calculate satisfaction value and tip percent
-        float satisfaction = District.Instance.GetSatisfactionRatio(order, currentWaitTime);
+        _serviceFeedback = District.Instance.GetSatisfactionRatio(order, currentWaitTime);
+        float satisfaction = _serviceFeedback.ServiceScore;
         _thoughtsProcessor.ShowFeedback(satisfaction, true);
-        float tipAmount = (satisfaction / 100) * order.Cash.Value;
+        float tipAmount = (satisfaction / 100) * order.Cash.Count;
 
         //Show tip amount as a floating text object
         if(GameManager.Instance.FloatingTextPrefab != null) {
@@ -127,7 +129,12 @@ public class BasicAI : MonoBehaviour {
             floatingTextCmp.ShowText(satisfaction + "! $" + tipAmount, this.transform.position);
         }//if floating text
 
-        return (float)System.Math.Round(order.Cash.Value + tipAmount, 2);
+        if (LevelStats.Instance != null) {
+            ConsumerReport cr = new ConsumerReport(_serviceFeedback, this.name, currentWaitTime);
+            LevelStats.Instance.AddReport(cr);
+        }
+
+        return (float)System.Math.Round(order.Cash.Count + tipAmount, 2);
     }//RecieveOrder
 
 
@@ -150,7 +157,9 @@ public class BasicAI : MonoBehaviour {
                 eState = StateMachine.walking;
                 return;
             }
-            waitTime = Random.Range(MaxWaitingTime.x, MaxWaitingTime.y);
+
+            this.maxWaitTime = District.Instance.MaxWaitTime;
+            waitTime = Random.Range(maxWaitTime.x, maxWaitTime.y);
         }//if standing in line
     }//SetState
 
@@ -162,6 +171,7 @@ public class BasicAI : MonoBehaviour {
         velocity = Vector2.zero;
         Speed = Random.Range(SpeedRange.x, SpeedRange.y);
         eState = StateMachine.walking;
+        _serviceFeedback = null;
 
         _thoughtsProcessor.HideAll();
 
@@ -195,4 +205,10 @@ public class BasicAI : MonoBehaviour {
         this.gameObject.SetActive(false);
     }//OnDestroy
 
+
+    public void OnMouseDown() {
+        if (_serviceFeedback == null)
+            return;
+        Debug.Log(_serviceFeedback.GetLowestGrade());
+    }
 }//class

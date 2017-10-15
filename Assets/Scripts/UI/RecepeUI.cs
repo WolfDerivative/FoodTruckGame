@@ -10,7 +10,7 @@ public class RecepeUI : StorageUI {
         UpdateBrainsValue(Shop.Instance.RecepeToServe.Brains.Count);
         UpdateSeasoningValue(Shop.Instance.RecepeToServe.Seasonings.Count);
         UpdateDrinksValue(Shop.Instance.RecepeToServe.Drinks.Count);
-        UpdateRecepePrice(Shop.Instance.RecepeToServe.Cash.Value);
+        UpdateRecepePrice(Shop.Instance.RecepeToServe.Cash.Count);
     }
 
 }//class

@@ -57,13 +57,18 @@ public class ThoughtProcessor : Thoughts {
 
     
     public FeedbackThoughts.Feedbacks FeedbackByRating(float rating) {
-        if (rating <= 3)
-            return FeedbackThoughts.Feedbacks.Sad;
-        if(rating > 3 && rating <= 6)
-            return FeedbackThoughts.Feedbacks.Neutral;
-        if(rating > 6)
-            return FeedbackThoughts.Feedbacks.Happy;
-        return FeedbackThoughts.Feedbacks.Angry;
+        ConsumerRating.Grade grade = District.Instance.Ratings.GradeFromPoints(rating);
+
+        switch (grade) {
+            case (ConsumerRating.Grade.A):
+                return FeedbackThoughts.Feedbacks.Happy;
+            case (ConsumerRating.Grade.B):
+                return FeedbackThoughts.Feedbacks.Neutral;
+            case (ConsumerRating.Grade.C):
+                return FeedbackThoughts.Feedbacks.Sad;
+            default:
+                return FeedbackThoughts.Feedbacks.Angry;
+        }
     }//FeedbackByRating
 
 

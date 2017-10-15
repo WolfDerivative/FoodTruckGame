@@ -25,17 +25,12 @@
     }//ObjectType
 
 
-    //public virtual void ReduceCash(float amount) {
-    //    Cash -= amount;
-    //}//ReduceCash
-
-
-    public virtual void Substruct(int amount, ResourceType rType) {
+    public virtual void Substruct(float amount, ResourceType rType) {
         ObjectFromType(rType).Subtract(amount);
     }//Substruct
 
 
-    public virtual void Add(int amount, ResourceType rType) {
+    public virtual void Add(float amount, ResourceType rType) {
         ObjectFromType(rType).Add(amount);
     }//Add
 

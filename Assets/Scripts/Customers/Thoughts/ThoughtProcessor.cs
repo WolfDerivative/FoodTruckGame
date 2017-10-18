@@ -46,19 +46,17 @@ public class ThoughtProcessor : Thoughts {
     }//ShowThoughts
 
 
-    public void ShowFeedback(float rating, bool state) {
+    public void ShowFeedback(ConsumerRating.Grade grade, bool state) {
         _foodThoughts.Hide();
         _actionThoughts.Hide();
 
-        _feedbackThoughts.SetIcon(FeedbackByRating(rating), state);
+        _feedbackThoughts.SetIcon(FeedbackByRating(grade), state);
         if (state && !_spriteRenderer.enabled)
             _spriteRenderer.enabled = true;
     }//ShowFeedback
 
     
-    public FeedbackThoughts.Feedbacks FeedbackByRating(float rating) {
-        ConsumerRating.Grade grade = District.Instance.Ratings.GradeFromPoints(rating);
-
+    public FeedbackThoughts.Feedbacks FeedbackByRating(ConsumerRating.Grade grade) {
         switch (grade) {
             case (ConsumerRating.Grade.A):
                 return FeedbackThoughts.Feedbacks.Happy;

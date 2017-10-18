@@ -1,6 +1,6 @@
 ﻿public class Resources {
 
-    public enum ResourceType { Brains, Seasonings, Drinks, Money }
+    public enum ResourceType { Brains, Seasonings, Drinks, Money, Waittime }
 
     //public float Cash;
     public Money        Cash;

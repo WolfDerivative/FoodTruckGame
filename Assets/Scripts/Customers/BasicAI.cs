@@ -11,7 +11,7 @@ public class BasicAI : MonoBehaviour {
     public Vector2  velocity;
     public string   POIName = "FoodTruck";
     public float    Gravity = 0.98f;
-    public Recepe[]   FoodPref;
+    public ConsumerRating ServicePrefs;
 
     protected StateMachine          eState;
     protected GameObject            leftWall, rightWall;
@@ -24,6 +24,7 @@ public class BasicAI : MonoBehaviour {
     protected ThoughtProcessor      _thoughtsProcessor;
     protected Recepe                 foodToOrder;
     protected ConsumerRating        _serviceFeedback;
+    protected District              _district;
 
     //Random time between X and Y this pedestrian will wait in line.
     private Vector2  maxWaitTime;
@@ -35,6 +36,7 @@ public class BasicAI : MonoBehaviour {
         leftWall    = GameObject.Find("leftWall");
         rightWall   = GameObject.Find("rightWall");
         _thoughtsProcessor   = GetComponentInChildren<ThoughtProcessor>();
+        _district = District.Instance;
         _serviceFeedback = null;
 
         Respawn();
@@ -80,7 +82,7 @@ public class BasicAI : MonoBehaviour {
         if (currentWaitTime >= waitTime) {
             this.eState = StateMachine.walking;
             waitTime = currentWaitTime = 0;
-            _thoughtsProcessor.ShowFeedback(-1, true);
+            _thoughtsProcessor.ShowFeedback(Rating.Grade.F, true);
             _shop.RemoveFromWaitQueue(this);
         }
 
@@ -98,7 +100,7 @@ public class BasicAI : MonoBehaviour {
 
 
     public void DeclineService() {
-        _thoughtsProcessor.ShowFeedback(-1, true);
+        _thoughtsProcessor.ShowFeedback(Rating.Grade.F, true);
         eState = StateMachine.walking;
     }//DeclineService
 
@@ -117,9 +119,13 @@ public class BasicAI : MonoBehaviour {
     public float RecieveOrder(Recepe order) {
         this.eState = StateMachine.walking;
 
-        _serviceFeedback = District.Instance.GetSatisfactionRatio(order, currentWaitTime);
-        float satisfaction = _serviceFeedback.ServiceScore;
-        _thoughtsProcessor.ShowFeedback(satisfaction, true);
+        //_serviceFeedback = District.Instance.GetSatisfactionRatio(order, currentWaitTime);
+        _serviceFeedback = _district.GetSatisfactionRatio(ServicePrefs, 
+                                                            order, 
+                                                            currentWaitTime);
+
+        float satisfaction = _serviceFeedback.Points;
+        _thoughtsProcessor.ShowFeedback(ServicePrefs.FinalGrade, true);
         float tipAmount = (satisfaction / 100) * order.Cash.Count;
 
         //Show tip amount as a floating text object

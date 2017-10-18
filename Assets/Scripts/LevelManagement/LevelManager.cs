@@ -5,7 +5,6 @@ public class LevelManager : MonoBehaviour {
     public static LevelManager Instance;
     public bool IsLevelComplete { get { return this.checkLevelComplete(); } }
 
-
     protected Wave _wave;
     protected float waitBeforeLevelComplete = 3f;
 
@@ -42,4 +41,5 @@ public class LevelManager : MonoBehaviour {
     public int GetTotalSpawns() {
         return _wave.TotalSpanws();
     }//TotalSpawns
+
 }//class

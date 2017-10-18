@@ -13,10 +13,14 @@ public class District: MonoBehaviour {
     public WaitTimePreference   WaitTimePref;
     [Tooltip("How much customers are willing to tip in this district.")]
     [Range(0.0f, 1.0f)] public float MaxTips = 0.1f;
+    [Tooltip("Max reputation value available for this level.")]
+    public float MaxReputationValue = 100;
     //used by BasicAI to get randoim wait value
     public Vector2 MaxWaitTime = new Vector2(4.5f, 6f);
-
     public ConsumerRating Ratings;
+    public float ReputationStatus { get { return this.reputation; } }
+
+    private float reputation;
 
 
     public void Start() {
@@ -43,16 +47,22 @@ public class District: MonoBehaviour {
     /// <param name="received">Recepe that client bought.</param>
     /// <param name="timeWaited">How long did he wait in line.</param>
     /// <returns></returns>
-    public ConsumerRating GetSatisfactionRatio(Recepe received, float timeWaited) {
-        Ratings.BrainsRating.RatioByRange(received.Brains.Count);
+    public ConsumerRating GetSatisfactionRatio(ConsumerRating prefs, Recepe received, float timeWaited) {
+       var feedback = prefs.GetSatisfactionRatio(received, timeWaited);
 
-        Ratings.SeasoningsRating.RatioByRange(received.Seasonings.Count);
-        Ratings.DrinksRating.RatioByRange(received.Drinks.Count);
-
-        Ratings.WaitTimeRating.RatioByRange(timeWaited);
-
-        return Ratings;
+        AddReputation(feedback.Points);
+        return feedback;
     }//GetSatisfactionRatio
 
 
+    public void AddReputation(float amount) {
+        reputation += amount;
+        reputation = reputation < 0 ? 0 : reputation;
+        reputation = reputation > MaxReputationValue ? MaxReputationValue : reputation;
+    }//AddReputation
+
+
+    public void ReduceReputation(float amount) {
+        AddReputation(-amount);
+    }//ReduceReputation
 }//class

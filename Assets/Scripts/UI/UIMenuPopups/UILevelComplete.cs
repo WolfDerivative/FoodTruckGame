@@ -5,15 +5,18 @@ public class UILevelComplete : UIMenuPopup {
 
     public GameObject GradeValueGO;
     public GameObject ServedValueGO;
+    public GameObject ReputationValueGO;
 
     private Text tGradeValue;
     private Text tServedValue;
+    private Text tRepValue;
 
 
     public override void Start() {
         base.Start();
         tGradeValue = this.getTextCmp(GradeValueGO);
         tServedValue = this.getTextCmp(ServedValueGO);
+        tRepValue = this.getTextCmp(ReputationValueGO);
     }//Start
 
 
@@ -38,11 +41,28 @@ public class UILevelComplete : UIMenuPopup {
 
     public override void Show() {
         base.Show();
-        this.tGradeValue.text = LevelStats.Instance.GetAverageGrade().ToString();
 
+        this.showLevelGrade();
+        this.showSpawns();
+        this.showReputation();
+    }//Show
+
+
+    protected void showLevelGrade() {
+        this.tGradeValue.text = LevelStats.Instance.GetAverageGrade().ToString();
+    }//showLevelGrade
+
+
+    protected void showSpawns() {
         int totalSpawns = LevelManager.Instance.GetTotalSpawns();
         int served = LevelStats.Instance.CustomersServed.Count;
-
         this.tServedValue.text = totalSpawns + "/" + served;
-    }//Show
+    }//showSpawns
+
+
+    protected void showReputation() {
+        int rep = Mathf.FloorToInt(LevelStats.Instance.ReputationStatus);
+        int max = Mathf.FloorToInt(LevelStats.Instance.MaxReputationValue);
+        this.tRepValue.text = rep + " / " + max;
+    }//showReputation
 }//class

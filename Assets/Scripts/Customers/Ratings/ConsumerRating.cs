@@ -4,37 +4,26 @@ using UnityEngine;
 [System.Serializable]
 public class ConsumerRating : Rating {
 
-    public IngredientRating BrainsRating = new IngredientRating(Resources.ResourceType.Brains);
-    public IngredientRating SeasoningsRating = new IngredientRating(Resources.ResourceType.Seasonings);
-    public IngredientRating DrinksRating = new IngredientRating(Resources.ResourceType.Drinks);
-    public WaittimeRaiting WaitTimeRating;
-    public float ServiceScore {
+    public IngredientRating BrainsPref        = new IngredientRating(Resources.ResourceType.Brains);
+    public IngredientRating SeasoningsPref    = new IngredientRating(Resources.ResourceType.Seasonings);
+    public IngredientRating DrinksPref        = new IngredientRating(Resources.ResourceType.Drinks);
+    public WaittimeRaiting WaitTimePref       = new WaittimeRaiting(Resources.ResourceType.Waittime);
+
+    public override float Points { get { return GetPoints(); } }
+    public override Grade FinalGrade {
         get {
-            return PointsFromGrade(ServiceGrade);
+            return GradeFromPoints(Points);
         }
-    }//ServiceScore
-    public Grade ServiceGrade { get { return this.calculateServiceGrade(); } }
+    }
 
     private List<IngredientRating> _ratingTypes;
 
-
-    private Grade calculateServiceGrade() {
-        float total = 0;
-        total += BrainsRating.Points;
-        total += SeasoningsRating.Points;
-        total += DrinksRating.Points;
-        total += WaitTimeRating.Points;
-        Grade finalGrade = GradeFromPoints(total);
-        return finalGrade;
-    }//calculateServiceScore
-
-
     public override string ToString() {
         string result = "";
-        result += "Brains: " + BrainsRating.FinalGrade + "\n";
-        result += "Seasonings: " + SeasoningsRating.FinalGrade + "\n";
-        result += "Drinks: " + DrinksRating.FinalGrade + "\n";
-        result += "WaitTime: " + WaitTimeRating.FinalGrade;
+        result += "Brains: " + BrainsPref.FinalGrade + "\n";
+        result += "Seasonings: " + SeasoningsPref.FinalGrade + "\n";
+        result += "Drinks: " + DrinksPref.FinalGrade + "\n";
+        result += "WaitTime: " + WaitTimePref.FinalGrade;
         return result;
     }//ToString
 
@@ -50,7 +39,7 @@ public class ConsumerRating : Rating {
             }//if
         }//for
 
-        ingRating.SetGrade(lowest);
+        //ingRating.SetGrade(lowest);
         return ingRating;
     }//GetLowestGrade
 
@@ -58,15 +47,34 @@ public class ConsumerRating : Rating {
     public List<IngredientRating> GetRatingTypes() {
         if (this._ratingTypes == null) {
             this._ratingTypes = new List<IngredientRating>() {
-                            BrainsRating,
-                            SeasoningsRating,
-                            DrinksRating,
-                            WaitTimeRating
+                            BrainsPref,
+                            SeasoningsPref,
+                            DrinksPref,
+                            WaitTimePref
                         };
         }//if
         return this._ratingTypes;
     }//GetRatingTypes
 
+
+    public float GetPoints() {
+        List<IngredientRating> ratings = GetRatingTypes();
+        float total = 0;
+        for (int i=0; i < ratings.Count; i++) {
+            total += ratings[i].Points;
+        }
+        return total;
+    }//GetPoints
+
+    public ConsumerRating GetSatisfactionRatio(Recepe received, float timeWaited) {
+        BrainsPref.GradeByRange(received.Brains.Count);
+        SeasoningsPref.GradeByRange(received.Seasonings.Count);
+        DrinksPref.GradeByRange(received.Drinks.Count);
+
+        WaitTimePref.GradeByRange(timeWaited);
+
+        return this;
+    }//GetSatisfactionRatio
 }//class
 
 
@@ -88,7 +96,7 @@ public class IngredientRating : Rating{
     }
 
 
-    public override Grade RatioByRange(float received) {
+    public override Grade GradeByRange(float received) {
         Grade grade = Grade.F;
 
         if (received < Range.x)
@@ -105,8 +113,9 @@ public class IngredientRating : Rating{
 
         if (received > Range.z)
             grade = Grade.F;
-        
+
         this.SetGrade(grade);
+        this.SetScore(PointsFromGrade(grade));
         return grade;
     }//RatioByRange
 }//Rating class
@@ -114,7 +123,12 @@ public class IngredientRating : Rating{
 
 [System.Serializable]
 public class WaittimeRaiting : IngredientRating {
-    public override Grade RatioByRange(float received) {
+
+    public WaittimeRaiting(Storage.ResourceType rtype) {
+        this.ServiceType = rtype;
+    }
+
+    public override Grade GradeByRange(float received) {
         Grade grade = Grade.F;
 
         if (received < Range.x)
@@ -128,8 +142,9 @@ public class WaittimeRaiting : IngredientRating {
 
         if (received >= Range.z)
             grade = Grade.F;
-        
+
         this.SetGrade(grade);
+        this.SetScore(PointsFromGrade(grade));
         return grade;
     }//RatioByRange
 }

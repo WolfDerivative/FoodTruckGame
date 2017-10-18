@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -63,7 +61,10 @@ public class ObjectPool: MonoBehaviour {
     /// </summary>
     /// <returns>GameObject instanc or null when pool has no inactive objects.</returns>
     public virtual GameObject GetInactive() {
-        foreach (GameObject go in this.pool) {
+        for (int i = 0; i < this.pool.Count; i++) { 
+            GameObject go = this.pool[i];
+            if (go == null)
+                continue;
             if (!go.activeInHierarchy)
                 return go;
         }//foreach

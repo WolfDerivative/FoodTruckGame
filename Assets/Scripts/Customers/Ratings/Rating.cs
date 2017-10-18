@@ -10,11 +10,11 @@ public class Rating {
     public float B = 1;
     public float A = 2;
 
-    public float Points { get { return PointsFromGrade(finalGrade); } }
-    public Grade FinalGrade { get { return this.finalGrade; } }
+    public virtual float Points { get { return finalScore; } }
+    public virtual Grade FinalGrade { get { return finalGrade; } }
 
     private Grade finalGrade; //set when RatioByRange is called.
-
+    private float finalScore;
 
     /// <summary>
     ///  Return points value\bonus for the provided grade. Note: it is not
@@ -35,6 +35,7 @@ public class Rating {
         }//swotch
     }//PointsFromGrade
 
+
     /// <summary>
     ///  Get the grade for the recieved value in a given range.
     /// Return Grade when "recieved" falls into the given "range".
@@ -42,30 +43,7 @@ public class Rating {
     /// <param name="range">Range defining the grade. X = C, Y = A...</param>
     /// <param name="received">Feedback value given by the customer.</param>
     /// <param name="isReverse">X becomes upper bracket (e.g. Y).</param>
-    //public virtual Grade RatioByRange(Vector3 range, float received, bool isReverse = false) {
-    //    Grade grade = Grade.F;
-
-    //    if (received < range.x)
-    //        grade = (!isReverse) ? Grade.F : Grade.A;
-
-    //    if (received >= range.x && received < range.y)
-    //        grade = (!isReverse) ? Grade.C : Grade.A;
-
-    //    if (received >= range.y && received < range.z)
-    //        grade = (!isReverse) ? Grade.B : Grade.B;
-
-    //    if (received == range.z)
-    //        grade = Grade.A;
-
-    //    if (received > range.z)
-    //        grade = Grade.F;
-
-    //    Debug.Log(grade + " -> " + received + " | " + range);
-    //    finalGrade = grade;
-    //    return grade;
-    //}//SatisfactionValue
-
-    public virtual Grade RatioByRange(float received) {
+    public virtual Grade GradeByRange(float received) {
         return Grade.F;
     }//SatisfactionValue
 
@@ -122,4 +100,5 @@ public class Rating {
 
 
     public void SetGrade(Grade grd) { this.finalGrade = grd; }
+    public void SetScore(float score) { this.finalScore = score; }
 }//Rating

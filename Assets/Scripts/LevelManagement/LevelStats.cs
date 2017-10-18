@@ -4,6 +4,9 @@ using UnityEngine;
 public class LevelStats : MonoBehaviour {
 
     public static LevelStats Instance;
+
+    public float ReputationStatus { get { return District.Instance.ReputationStatus; } }
+    public float MaxReputationValue { get { return District.Instance.MaxReputationValue; } }
     public List<ConsumerReport> CustomersServed {
         get {
             return this.reports;

@@ -1,65 +1,47 @@
 ﻿using UnityEngine;
 
-[System.Serializable]
-public class SpawnProgression {
-
-    public AnimationCurve Rate;
-    public float SpawnDelay = 0.5f;
-    public int Length { get { return Rate.keys.Length; } }
-
-
-    /// <summary>
-    ///  Return Value for the given keyframe index.
-    /// </summary>
-    /// <param name="keyIndex">Index to get a value on the curve.</param>
-    public float GetValue(int keyIndex) {
-        Keyframe[] keys = Rate.keys;
-        if (keyIndex > keys.Length - 1)
-            return -1;
-        return keys[keyIndex].value;
-    }//GetValue
-
-
-    public float GetSubwaveDelay(int currentIndex) {
-        Keyframe[] keys = Rate.keys;
-        if (currentIndex >= keys.Length - 1)
-            return -1;
-        return keys[currentIndex + 1].time - keys[currentIndex].time;
-    }//GetSubwaveDelay
-
-
-}//Property
-
-
+[RequireComponent(typeof(SpawnProgression))]
 public class Wave : MonoBehaviour {
 
-    public SpawnProgression Progression;
     /// <summary>
     ///  Status of the wave spawn progress. True - last object in the last subwave has been spawned.
     ///  False - there is more to spawn.
     /// </summary>
-    public bool IsNoMoreSpawns { get { return bIsCompleted; } }
+    public bool IsNoMoreSpawns  { get { return bIsCompleted; } }
+    public bool IsCanSpawn      { get { return this.bIsCanSpawn; } }
+    public bool IsWaveStarted   { get { return this.bWaveHasStarted; } }
+    public SpawnProgression Progression { get { return _progression; } }
+    public int TotalSpawns { get { return Mathf.FloorToInt(Progression.GetTotalValues()); } }
 
     protected PoolManager _poolManager;
+    protected SpawnProgression _progression;
 
-    private int currentIndex; //current index on the animation curve
-    private int spawnedCounter; //number of spawns per currentIndex
-    private float timeout;
-    private bool bIsSubwaveDelay;
-    private bool bIsCompleted; //last wave has been spawned.
+    private int     currentIndex; //current index on the animation curve
+    private int     spawnedCounter; //number of spawns per currentIndex
+    private float   timeout;
+    private bool    bIsSubwaveDelay;
+    private bool    bIsCompleted; //last wave has been spawned.
+    private bool    bIsCanSpawn;
+    private bool    bWaveHasStarted;
+    private Modifier _modifier;
 
 
     public void Start() {
         _poolManager = PoolManager.Instance;
+        _progression = GetComponent<SpawnProgression>();
+        bIsCanSpawn = false;
+        timeout = _progression.SpawnDelay;
     }//Start
 
 
     public void Update() {
-        StartSpawning();
+        if(this.bIsCanSpawn)
+            StartSpawning();
     }//Update
 
 
     public void StartSpawning() {
+        bWaveHasStarted = true;
         //PARANOIA. In case PoolManager loaded after this class, even though 
         //"Script execution order" is set correctly.
         if (_poolManager == null)
@@ -87,17 +69,30 @@ public class Wave : MonoBehaviour {
         }//if spawnedCounter
 
         //Spawn object every SpawnDelay second
-        if (timeout == 0) {
+        if (timeout >= Progression.SpawnDelay) {
             Spawn();
             //increment spawn count
             spawnedCounter++;
+            timeout = 0;
         }
 
         timeout += Time.deltaTime;
-        //calculate spawn delay
-        if (timeout >= Progression.SpawnDelay)
-            timeout = 0;
     }//StartSpawning
+
+
+    public void ModProgression(Modifier mod) {
+        Keyframe[] spawnFrames = new Keyframe[mod.Progression.Length];
+        for (int i = 0; i < mod.Progression.Length; i++) {
+            int minSpawn = Mathf.FloorToInt(Progression.GetValue(i));
+            if(minSpawn < 0) //no spawn value found in the original progression curve
+                minSpawn = 0;
+            int maxSpawn = Mathf.FloorToInt(minSpawn + mod.SpawnRange);
+            float newSpawnAmount = Random.Range(minSpawn, maxSpawn);
+            spawnFrames[i] = new Keyframe(i, newSpawnAmount);
+        }//for
+        Progression.SetSpawnCurve(spawnFrames);
+        Progression.SetSpawnDelay(mod.SpawnRange);
+    }//ModProgression
 
 
     public void NextSubwave() {
@@ -116,13 +111,27 @@ public class Wave : MonoBehaviour {
     }//Spawn
 
 
-    public int TotalSpanws() {
-        int total = 0;
-        for(int i=0; i < Progression.Rate.keys.Length; i++) {
-            Keyframe key = Progression.Rate.keys[i];
-            if (key.value > 0)
-                total += Mathf.FloorToInt(key.value);
-        }//for
-        return total;
-    }//TotalSpawns
+    public void SetCanSpawn(bool state) {
+        this.bIsCanSpawn = state;
+
+        if(_modifier == null)
+            return;
+
+        SetProgression(_modifier.Progression);
+        ModProgression(_modifier);
+    }//SetCanSpawn
+
+
+    public void SetModifier(Modifier mod) {
+        this._modifier = mod;
+    }//SetModifier
+
+
+    public void SetProgression(SpawnProgression prog) {
+        if (prog == null) {
+            GameUtils.Utils.WarningMessage("SetProggression getting null!");
+            return;
+        }//if passing null
+        this._progression.SetSpawnCurve(prog.CurveFrame);
+    }//SetProgression
 }//Wave

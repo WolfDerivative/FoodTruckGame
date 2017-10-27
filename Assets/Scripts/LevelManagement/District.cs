@@ -42,12 +42,13 @@ public class District: MonoBehaviour {
 
 
     /// <summary>
-    /// 
+    ///  Calculate grade for the customer on the recieved recepe.
     /// </summary>
+    /// <param name="prefs"> Service Preferencies by the customer. </param>
     /// <param name="received">Recepe that client bought.</param>
     /// <param name="timeWaited">How long did he wait in line.</param>
     /// <returns></returns>
-    public ConsumerRating GetSatisfactionRatio(ConsumerRating prefs, Recepe received, float timeWaited) {
+    public ConsumerRating MakeFeedback(ConsumerRating prefs, Recepe received, float timeWaited) {
        var feedback = prefs.GetSatisfactionRatio(received, timeWaited);
 
         AddReputation(feedback.Points);
@@ -56,13 +57,16 @@ public class District: MonoBehaviour {
 
 
     public void AddReputation(float amount) {
-        reputation += amount;
-        reputation = reputation < 0 ? 0 : reputation;
-        reputation = reputation > MaxReputationValue ? MaxReputationValue : reputation;
+        this.reputation += amount;
+        this.reputation = this.reputation < 0 ? 0 : this.reputation;
+        this.reputation = this.reputation > MaxReputationValue ? MaxReputationValue : this.reputation;
     }//AddReputation
 
 
     public void ReduceReputation(float amount) {
         AddReputation(-amount);
     }//ReduceReputation
+
+
+    public void SetReputation(float amount) { this.reputation = amount; }
 }//class

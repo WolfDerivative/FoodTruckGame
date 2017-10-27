@@ -54,15 +54,15 @@ public class UILevelComplete : UIMenuPopup {
 
 
     protected void showSpawns() {
-        int totalSpawns = LevelManager.Instance.GetTotalSpawns();
+        int totalSpawns = LevelManager.Instance.TotalPotentialCustommers;
         int served = LevelStats.Instance.CustomersServed.Count;
-        this.tServedValue.text = totalSpawns + "/" + served;
+        this.tServedValue.text = "Served: " + served + " out of " + totalSpawns;
     }//showSpawns
 
 
     protected void showReputation() {
-        int rep = Mathf.FloorToInt(LevelStats.Instance.ReputationStatus);
-        int max = Mathf.FloorToInt(LevelStats.Instance.MaxReputationValue);
+        int rep = Mathf.FloorToInt(District.Instance.ReputationStatus);
+        int max = Mathf.FloorToInt(District.Instance.MaxReputationValue);
         this.tRepValue.text = rep + " / " + max;
     }//showReputation
 }//class

@@ -1,29 +1,78 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour {
 
     public static LevelManager Instance;
     public bool IsLevelComplete { get { return this.checkLevelComplete(); } }
+    public int TotalPotentialCustommers { get { return _weekday.WaveCmp.TotalSpawns; } }
 
-    protected Wave _wave;
     protected float waitBeforeLevelComplete = 3f;
 
     private float theEndCountdown;
+    private WeekdayBehaviour _weekday;
+    private bool bHasSaved;
+    private DistrictData districtSaveData;
+    private float gameSpeedMultiplier = 1f;
 
 
     public void Start() {
         Instance = this;
-        _wave = GetComponentInChildren<Wave>();
+        _weekday = GetComponentInChildren<WeekdayBehaviour>();
+        this.bHasSaved = false;
+
+        var savedGame = GameManager.Instance.LoadGame();
+        this.districtSaveData = savedGame.GetDistrictDataByName(SceneManager.GetActiveScene().name);
+        LoadDistrictProps(this.districtSaveData);
+
+        SetGameSpeed(1);
     }//Start
 
 
     public void Update() {
-        this.checkLevelComplete();
+        if (_weekday.IsReady) {
+            if (!_weekday.WaveCmp.IsCanSpawn) {
+                _weekday.WaveCmp.SetModifier(_weekday.GetModifier());
+                _weekday.WaveCmp.SetCanSpawn(true);
+            }//if cant spawn
+        }//if weekday not loaded yet
     }//Update
 
 
+    public void LateUpdate() {
+        bool isCompleted = this.checkLevelComplete();
+        if(!isCompleted)
+            this.bHasSaved = false;
+
+        if (isCompleted) {
+            if(this.bHasSaved) //savegame onlt once.
+                return;
+            SetGameSpeed(1);    //reset gamespeed back to normal
+
+            if (Calendar.Instance == null)
+                GameUtils.Utils.WarningMessage("Calendar Instance is not set!");
+
+            this.bHasSaved = true;
+        }
+    }//Update
+
+
+    public void LoadDistrictProps(DistrictData dt) {
+        District.Instance.SetReputation(dt.GetReputationStatus());
+    }//LoadDistrictProps
+
+
+    /// <summary>
+    ///  Verify if all customers of the day were spawned and are
+    /// not waiting in the line or walking towards the shop.
+    /// </summary>
     protected bool checkLevelComplete() {
-        if (!_wave.IsNoMoreSpawns)
+        if (_weekday.WaveCmp == null) //_wave has not yet initiated
+            return false;
+        if(!_weekday.WaveCmp.IsWaveStarted) //wave has not started spawn routine yet.
+            return false;
+
+        if (!_weekday.WaveCmp.IsNoMoreSpawns)
             return false;
 
         if (Shop.Instance.WaitingQ.Count > 0 ||
@@ -38,8 +87,15 @@ public class LevelManager : MonoBehaviour {
     }//checkLevelComplete
 
 
-    public int GetTotalSpawns() {
-        return _wave.TotalSpanws();
-    }//TotalSpawns
+    public void OnDestroy() {
+        this.districtSaveData.SetReputation(District.Instance.ReputationStatus);
+        GameManager.Instance.SaveGameDistrict(this.districtSaveData);
+        Calendar.Instance.NextDay();
+        GameManager.Instance.SaveGame();
+    }//OnDestroy
 
+
+    public void SetGameSpeed(float multiplier) {
+        Time.timeScale = multiplier;
+    }//SetGameSpeed
 }//class

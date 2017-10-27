@@ -3,6 +3,7 @@
 
 public class LookAlive : MonoBehaviour {
     
+
     public void Start() {
         DontDestroyOnLoad(this);
     }//Awake

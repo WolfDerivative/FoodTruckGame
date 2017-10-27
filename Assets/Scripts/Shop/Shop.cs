@@ -13,6 +13,7 @@ public class Shop : MonoBehaviour {
     public int MaxPrepedFood = 2;
     public List<BasicAI> WaitingQ   { get { return this.waitingQueue; } }
     public List<BasicAI> OrderedQ   { get { return this.orderedQueue; } }
+    public Storage StorageState { get { return _shopStorage; } }
 
     public List<BasicAI> waitingQueue;  //FIXME: make it private
     public List<BasicAI> orderedQueue;  //FIXME: make it private
@@ -32,10 +33,8 @@ public class Shop : MonoBehaviour {
     public void Start() {
         Instance        = this;
         this.initComponents();
-        waitingQueue    = new List<BasicAI>();
-        orderedQueue    = new List<BasicAI>();
-        cooking         = new Dictionary<BasicAI, Recepe>();
         _shopStorage    = GameManager.Instance.GlobalStorage;
+        Reset();
     }//Start
 
 
@@ -47,10 +46,17 @@ public class Shop : MonoBehaviour {
     }//InitComponents
 
 
-    public void Update() {
+    public void Reset() {
+        waitingQueue = new List<BasicAI>();
+        orderedQueue = new List<BasicAI>();
+        cooking = new Dictionary<BasicAI, Recepe>();
+    }
+
+    public void LateUpdate() {
         if (orderedQueue.Count < MaxOrders)
             TakeOrder();
-        CookAndServe();
+        if(orderedQueue.Count > 0)
+            CookAndServe();
     }//Update
 
 
@@ -79,18 +85,24 @@ public class Shop : MonoBehaviour {
         }//if
 
         _shopStorage.Substruct(RecepeToServe);
-
-        orderedQueue.Add(client);
         //dispose food for the client if he ordered before, 
         //but food was not removed from the grill.
         DisposeCooked(client);
+
+        orderedQueue.Add(client);
         Recepe foodToCook = new Recepe(RecepeToServe);
 
         cooking.Add(client, foodToCook);
+
+        client.SetState(BasicAI.StateMachine.waitingForOrder);
     }//TakeOrder
 
 
     public void ServeClient(BasicAI client, Recepe toServe) {
+        if (client.CurrentState != BasicAI.StateMachine.waitingForOrder) {
+            GameUtils.Utils.WarningMessage(client.name + 
+                " is not waiting-for-order while ServeClient is called! [" + client.CurrentState + "]");
+        }
         float cash = client.RecieveOrder(toServe);
         _shopStorage.Cash.Add(cash);
         if (orderedQueue.Contains(client)) {
@@ -103,6 +115,10 @@ public class Shop : MonoBehaviour {
         List<BasicAI> toRemove = new List<BasicAI>();
         for (int i = 0; i < orderedQueue.Count; i++) {
             BasicAI client = orderedQueue[i];
+            if (client.CurrentState != BasicAI.StateMachine.waitingForOrder) {
+                ClientWalkedAway(client);
+                continue;
+            }
             if (!cooking.ContainsKey(client)) {
                 GameUtils.Utils.WarningMessage(client.name + " has no cooking food?!");
                 continue;
@@ -114,12 +130,11 @@ public class Shop : MonoBehaviour {
                 ServeClient(client, foodOnTheGrill);
             }//if cooked
         }//for
+
         foreach(BasicAI served in toRemove) {
             if (!cooking.ContainsKey(served))
                 continue;
-            //Destroy(cooking[served].gameObject);
             cooking.Remove(served);
-
         }//foreach
     }//Cook
 
@@ -151,12 +166,14 @@ public class Shop : MonoBehaviour {
     }//DisposeCooked
 
 
-    /// <summary>
-    ///  Return currently server by the shop recepe.
-    /// </summary>
-    public Recepe GetRecepe() {
-        return RecepeToServe;
-    }//PickAnyFromMenu
+    public void ClientWalkedAway(BasicAI client) {
+        if(this.waitingQueue.Contains(client))
+            this.waitingQueue.Remove(client);
+        if(this.orderedQueue.Contains(client))
+            this.orderedQueue.Remove(client);
+    }//ClientWalkedAway
+
+    public void SetStorage(Storage st) { this._shopStorage = st; }
 
 
     public void OnTriggerEnter2D(Collider2D collision) {
@@ -198,6 +215,8 @@ public class Shop : MonoBehaviour {
             _spriteRenderer.enabled = false;
             _boxCollider.enabled    = false;
         }//if-else
+
+        Reset();
     }//OnSceneLoaded
 
 }//class

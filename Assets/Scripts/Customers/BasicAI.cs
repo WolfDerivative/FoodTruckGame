@@ -12,6 +12,7 @@ public class BasicAI : MonoBehaviour {
     public string   POIName = "FoodTruck";
     public float    Gravity = 0.98f;
     public ConsumerRating ServicePrefs;
+    public StateMachine CurrentState { get { return this.eState; } }
 
     protected StateMachine          eState;
     protected GameObject            leftWall, rightWall;
@@ -55,7 +56,7 @@ public class BasicAI : MonoBehaviour {
 
 
     public void WalkingState(ref Vector2 deltaMovement) {
-        if (eState != StateMachine.walking)
+        if (CurrentState != StateMachine.walking)
             return;
 
         deltaMovement.x = Speed * moveDirection * Time.deltaTime;
@@ -74,16 +75,16 @@ public class BasicAI : MonoBehaviour {
 
 
     public void StaindingInLine(ref Vector2 deltaMovement) {
-        if (eState != StateMachine.standingInLine)
+        if (CurrentState != StateMachine.standingInLine)
             return;
-        if (eState == StateMachine.standingInLine)
+        if (CurrentState == StateMachine.standingInLine)
             deltaMovement.x = 0;
         currentWaitTime += Time.deltaTime;
         if (currentWaitTime >= waitTime) {
             this.eState = StateMachine.walking;
             waitTime = currentWaitTime = 0;
             _thoughtsProcessor.ShowFeedback(Rating.Grade.F, true);
-            _shop.RemoveFromWaitQueue(this);
+            _shop.ClientWalkedAway(this);
         }
 
         _thoughtsProcessor.ShowAction(ActionThoughts.Actions.StandingInLine, true);
@@ -91,36 +92,30 @@ public class BasicAI : MonoBehaviour {
 
 
     public void WaitingForOrderState(ref Vector2 deltaMovement) {
-        if (eState != StateMachine.waitingForOrder)
+        if (CurrentState != StateMachine.waitingForOrder)
             return;
 
         _thoughtsProcessor.ShowAction(ActionThoughts.Actions.WaitingForOrder, true);
-        _thoughtsProcessor.ShowFoodChoice(foodToOrder.Icon, true);
+        //_thoughtsProcessor.ShowFoodChoice(foodToOrder.Icon, true);
     }//WaitingForOrderState
 
 
     public void DeclineService() {
         _thoughtsProcessor.ShowFeedback(Rating.Grade.F, true);
         eState = StateMachine.walking;
+        _shop.ClientWalkedAway(this);
     }//DeclineService
 
 
-    /// <summary>
-    ///  Return a Food object to be cooked for this client.
-    /// </summary>
-    /// <returns></returns>
-    public Recepe TakeOrder() {
-        this.eState = StateMachine.waitingForOrder;
-        _thoughtsProcessor.ShowFoodChoice(foodToOrder.Icon, true);
-        return foodToOrder;
-    }//Order
-
-
     public float RecieveOrder(Recepe order) {
+        if (CurrentState != StateMachine.waitingForOrder) {
+            GameUtils.Utils.WarningMessage(this.name + " trying to recieve order " + 
+                            order.ToString() + " while " + CurrentState.ToString());
+            return 0;
+        }
         this.eState = StateMachine.walking;
-
-        //_serviceFeedback = District.Instance.GetSatisfactionRatio(order, currentWaitTime);
-        _serviceFeedback = _district.GetSatisfactionRatio(ServicePrefs, 
+        
+        _serviceFeedback = _district.MakeFeedback(ServicePrefs, 
                                                             order, 
                                                             currentWaitTime);
 
@@ -158,7 +153,7 @@ public class BasicAI : MonoBehaviour {
     public void SetState(StateMachine newState) {
         eState = newState;
         if(eState == StateMachine.standingInLine) {
-            foodToOrder = _shop.GetRecepe();
+            foodToOrder = _shop.RecepeToServe;
             if (foodToOrder == null) {      //PARANOIA??? Why would that ever happened.
                 eState = StateMachine.walking;
                 return;

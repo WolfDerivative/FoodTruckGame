@@ -5,8 +5,6 @@ public class LevelStats : MonoBehaviour {
 
     public static LevelStats Instance;
 
-    public float ReputationStatus { get { return District.Instance.ReputationStatus; } }
-    public float MaxReputationValue { get { return District.Instance.MaxReputationValue; } }
     public List<ConsumerReport> CustomersServed {
         get {
             return this.reports;
@@ -34,7 +32,9 @@ public class LevelStats : MonoBehaviour {
             avg += grade;
         }//for
         Rating rating = new Rating();
-        int gradeInt = Mathf.FloorToInt(avg / reports.Count);
+        int gradeInt = 0;
+        if(reports.Count > 0)
+            Mathf.FloorToInt(avg / reports.Count);
         return rating.IntToEnumGrade(gradeInt);
     }//GetAverageGrade
 }//class

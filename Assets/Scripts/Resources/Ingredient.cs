@@ -1,6 +1,4 @@
-﻿
-
-[System.Serializable]
+﻿[System.Serializable]
 public class Ingredient {
 
     /// <summary>
@@ -10,6 +8,7 @@ public class Ingredient {
     /// </summary>
     public float Count = 0;
     public float Max = 50;
+
 
     public void Add(float amount) {
         Count += amount;

@@ -1,4 +1,5 @@
-﻿public class Resources {
+﻿[System.Serializable]
+public class Resources {
 
     public enum ResourceType { Brains, Seasonings, Drinks, Money, Waittime }
 
@@ -35,4 +36,8 @@
     }//Add
 
 
+    public override string ToString() {
+        return string.Format("C={0};B={1};S={2};D={3}",
+            Cash.Count, Brains.Count, Seasonings.Count, Drinks.Count);
+    }
 }//class

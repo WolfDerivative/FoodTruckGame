@@ -49,22 +49,25 @@ public class Wave : MonoBehaviour {
 
         //Get current spawn amount from index
         int toSpawnAmount = Mathf.FloorToInt(Progression.GetValue(currentIndex));
-        if (toSpawnAmount < 0) { //No more subwaves on the progression curve
+        //No more subwaves on the progression curve
+        if (toSpawnAmount < 0) {
             bIsCompleted = true;
             return;
-        }
+        }//if no subwaves
 
         if (spawnedCounter >= toSpawnAmount) {
             float subwaveDelay = Progression.GetSubwaveDelay(currentIndex);
+
             if (subwaveDelay < 0) {
                 currentIndex++;
                 return;
             }
 
+            //Wait for time between keyframe's on the curve for the next subwave spawn
             if (!bIsSubwaveDelay) {
                 bIsSubwaveDelay = true;
                 Invoke("NextSubwave", subwaveDelay);
-            }
+            }//if ready for next subwave spawn
             return;
         }//if spawnedCounter
 
@@ -74,7 +77,7 @@ public class Wave : MonoBehaviour {
             //increment spawn count
             spawnedCounter++;
             timeout = 0;
-        }
+        }//if spawndelay
 
         timeout += Time.deltaTime;
     }//StartSpawning
@@ -84,19 +87,21 @@ public class Wave : MonoBehaviour {
         Keyframe[] spawnFrames = new Keyframe[mod.Progression.Length];
         for (int i = 0; i < mod.Progression.Length; i++) {
             int minSpawn = Mathf.FloorToInt(Progression.GetValue(i));
-            if(minSpawn < 0) //no spawn value found in the original progression curve
+            //no spawn value found in the original progression curve
+            if (minSpawn < 0)
                 minSpawn = 0;
             int maxSpawn = Mathf.FloorToInt(minSpawn + mod.SpawnRange);
             float newSpawnAmount = Random.Range(minSpawn, maxSpawn);
-            spawnFrames[i] = new Keyframe(i, newSpawnAmount);
+            spawnFrames[i] = new Keyframe(mod.Progression.GetTime(i), newSpawnAmount);
         }//for
         Progression.SetSpawnCurve(spawnFrames);
-        Progression.SetSpawnDelay(mod.SpawnRange);
+        Progression.SetSpawnDelay(mod.Progression.SpawnDelay);
     }//ModProgression
 
 
     public void NextSubwave() {
-        timeout = 0;
+        //no need to delay spawn on subwave start
+        timeout = Progression.SpawnDelay;
         spawnedCounter = 0;
         currentIndex++;
         bIsSubwaveDelay = false;

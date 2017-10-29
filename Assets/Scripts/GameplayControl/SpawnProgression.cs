@@ -24,6 +24,17 @@ public class SpawnProgression : MonoBehaviour {
     }//GetValue
 
 
+    /// <summary>
+    ///  Time value for the given keyframe on the curve.
+    /// </summary>
+    public float GetTime(int keyIndex) {
+        Keyframe[] keys = SpawnCurve.keys;
+        if (keyIndex > keys.Length - 1)
+            return -1;
+        return keys[keyIndex].time;
+    }//GetTime
+
+
     public float GetSubwaveDelay(int currentIndex) {
         Keyframe[] keys = SpawnCurve.keys;
         if (currentIndex >= keys.Length - 1)

@@ -5,6 +5,8 @@ public class Modifier {
 
     [Tooltip("Wave curve multiplier. It is a Max spawn amount on the key curve. E.g. range=(curve_value, curve_value + curve_value*SpawnMultiplier);")]
     public float SpawnRange = 1;
+    [Tooltip("Adds or substructs SpawnDelay amount to the current wave SpawnDelay.")]
+    public float SpawnDelay = 0;
     [Tooltip("Prefab with the SpawnProgression component to be used for spawn behaviour.")]
     public GameObject ProgressionPrefab;
     public SpawnProgression Progression { get { return this._progression; } }
@@ -14,6 +16,7 @@ public class Modifier {
 
     public void SetProgression(SpawnProgression sp) {
         _progression = sp;
+        _progression.SpawnDelay += SpawnDelay;
     }//SetProgression
 
 

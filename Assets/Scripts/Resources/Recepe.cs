@@ -7,7 +7,7 @@ public class Recepe : Resources{
     public float CookTime   = 2;
     public Sprite Icon;
 
-    private float currentCookingTime;
+    public float currentCookingTime;
 
 
     public Recepe(Recepe r) {
@@ -15,6 +15,7 @@ public class Recepe : Resources{
         this.Seasonings = r.Seasonings;
         this.Drinks = r.Drinks;
         this.Cash = r.Cash;
+        this.CookTime = r.CookTime;
     }//ctor
 
 

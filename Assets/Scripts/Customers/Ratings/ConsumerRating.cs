@@ -2,40 +2,27 @@
 using UnityEngine;
 
 [System.Serializable]
-public class ConsumerRating : Rating {
+public class ConsumerRating {
 
     public IngredientRating BrainsPref        = new IngredientRating(Resources.ResourceType.Brains);
     public IngredientRating SeasoningsPref    = new IngredientRating(Resources.ResourceType.Seasonings);
     public IngredientRating DrinksPref        = new IngredientRating(Resources.ResourceType.Drinks);
     public WaittimeRaiting WaitTimePref       = new WaittimeRaiting(Resources.ResourceType.Waittime);
-
-    public override float Points { get { return GetPoints(); } }
-    public override Grade FinalGrade {
-        get {
-            return GradeFromPoints(Points);
-        }
-    }
+    public Rating.Grade ServiceGrade { get { return this.finalGrade; } }
 
     private List<IngredientRating> _ratingTypes;
-
-    public override string ToString() {
-        string result = "";
-        result += "Brains: " + BrainsPref.FinalGrade + "\n";
-        result += "Seasonings: " + SeasoningsPref.FinalGrade + "\n";
-        result += "Drinks: " + DrinksPref.FinalGrade + "\n";
-        result += "WaitTime: " + WaitTimePref.FinalGrade;
-        return result;
-    }//ToString
+    private Rating.Grade finalGrade;
 
 
     public IngredientRating GetLowestGrade() {
-        Grade lowest = Grade.F;
+        Rating.Grade lowest = Rating.Grade.F;
         IngredientRating ingRating = new IngredientRating();
-        for(int i=0; i<GetRatingTypes().Count; i++) {
-            Grade grade = GetRatingTypes()[i].FinalGrade;
+        var typesOfService = GetRatingTypes();
+        for (int i=0; i < typesOfService.Count; i++) {
+            Rating.Grade grade = typesOfService[i].FinalGrade;
             if (grade < lowest) {
                 lowest = grade;
-                ingRating = new IngredientRating(GetRatingTypes()[i].ServiceType);
+                ingRating = new IngredientRating(typesOfService[i].ServiceType);
             }//if
         }//for
 
@@ -46,45 +33,55 @@ public class ConsumerRating : Rating {
 
     public List<IngredientRating> GetRatingTypes() {
         if (this._ratingTypes == null) {
-            this._ratingTypes = new List<IngredientRating>() {
-                            BrainsPref,
-                            SeasoningsPref,
-                            DrinksPref,
-                            WaitTimePref
-                        };
+            this._ratingTypes = new List<IngredientRating>() 
+                                { BrainsPref, SeasoningsPref, DrinksPref, WaitTimePref };
         }//if
         return this._ratingTypes;
     }//GetRatingTypes
 
 
-    public float GetPoints() {
-        List<IngredientRating> ratings = GetRatingTypes();
-        float total = 0;
-        for (int i=0; i < ratings.Count; i++) {
-            total += ratings[i].Points;
-        }
-        return total;
-    }//GetPoints
+    /// <summary>
+    ///     Calculate average grade based of the recepe recieved.
+    /// This will also set the ServiceGrade value.
+    /// </summary>
+    /// <param name="received">Recepe that was served to the customer.</param>
+    /// <param name="timeWaited">How long did customer wait to get the order.</param>
+    public ConsumerRating RateService(Recepe received, float timeWaited) {
+        float avg = 0;
+        avg += (float)BrainsPref.GradeByRange(received.Brains.Count);
+        avg += (float)SeasoningsPref.GradeByRange(received.Seasonings.Count);
+        avg += (float)DrinksPref.GradeByRange(received.Drinks.Count);
 
-    public ConsumerRating GetSatisfactionRatio(Recepe received, float timeWaited) {
-        BrainsPref.GradeByRange(received.Brains.Count);
-        SeasoningsPref.GradeByRange(received.Seasonings.Count);
-        DrinksPref.GradeByRange(received.Drinks.Count);
+        avg += (float)WaitTimePref.GradeByRange(timeWaited);
 
-        WaitTimePref.GradeByRange(timeWaited);
+        Rating ratingObj = new Rating();
+        avg = avg / 4;
+        this.finalGrade = ratingObj.IntToEnumGrade(Mathf.FloorToInt(avg));
 
         return this;
     }//GetSatisfactionRatio
+
+
+    public override string ToString() {
+        string result = "";
+        result += "Brains: " + BrainsPref.FinalGrade + "\n";
+        result += "Seasonings: " + SeasoningsPref.FinalGrade + "\n";
+        result += "Drinks: " + DrinksPref.FinalGrade + "\n";
+        result += "WaitTime: " + WaitTimePref.FinalGrade;
+        return result;
+    }//ToString
 }//class
 
 
 [System.Serializable]
 public class IngredientRating : Rating{
 
-    public Vector3 Range;
+    [Tooltip("Type of service/ingredient to be rated.")]
     public Storage.ResourceType ServiceType;
 
-    public IngredientRating(){}
+
+    public IngredientRating(){} //default ctor
+
 
     public IngredientRating(Storage.ResourceType rtype) {
         this.ServiceType = rtype;
@@ -93,29 +90,26 @@ public class IngredientRating : Rating{
 
     public override string ToString() {
         return this.ServiceType + " : " + this.FinalGrade;
-    }
+    }//ToString
 
 
     public override Grade GradeByRange(float received) {
         Grade grade = Grade.F;
 
-        if (received < Range.x)
+        if (received <= F || received > A)
             grade = Grade.F;
 
-        if (received >= Range.x && received < Range.y)
+        if (received >= C && received < B)
             grade = Grade.C;
 
-        if (received >= Range.y && received < Range.z)
+        if (received >= B && received < A)
             grade = Grade.B;
 
-        if (received == Range.z)
+        if (received == A)
             grade = Grade.A;
-
-        if (received > Range.z)
-            grade = Grade.F;
-
+        
         this.SetGrade(grade);
-        this.SetScore(PointsFromGrade(grade));
+        //this.SetScore(GradeWeight(grade));
         return grade;
     }//RatioByRange
 }//Rating class
@@ -131,20 +125,20 @@ public class WaittimeRaiting : IngredientRating {
     public override Grade GradeByRange(float received) {
         Grade grade = Grade.F;
 
-        if (received < Range.x)
+        if (received <= A)
             grade = Grade.A;
 
-        if (received >= Range.x && received < Range.y)
+        if (received > A && received <= B)
             grade = Grade.B;
 
-        if (received >= Range.y && received < Range.z)
+        if (received > B && received <= C)
             grade = Grade.C;
 
-        if (received >= Range.z)
+        if (received > C)
             grade = Grade.F;
 
         this.SetGrade(grade);
-        this.SetScore(PointsFromGrade(grade));
+        //this.SetScore(GradeWeight(grade));
         return grade;
     }//RatioByRange
 }

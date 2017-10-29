@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+
 
 public class BasicAI : MonoBehaviour {
 
@@ -12,13 +11,26 @@ public class BasicAI : MonoBehaviour {
     public string   POIName = "FoodTruck";
     public float    Gravity = 0.98f;
     public ConsumerRating ServicePrefs;
-    public StateMachine CurrentState { get { return this.eState; } }
+    public StateMachine CurrentState    { get { return this.eState; } }
+    public float TimeWaitedInLine       { get { return this.timeStandedInLine; } }
+    public float TimeWaitedForOrder     { get { return this.timeWaitedForOrder; } }
+    public float TotalWaitTime          { get { return TimeWaitedForOrder + TimeWaitedInLine; } }
+    public float MaxWaitInLine {
+        get {
+            if (this.maxWaitInLineTime <= 0) {
+                this.maxWaitInLineTime = Random.Range(District.Instance.MaxWaitTime.x,
+                                                District.Instance.MaxWaitTime.y);
+            }//if
+            return this.maxWaitInLineTime;
+        }//get
+    }//MaxWaitTime
 
     protected StateMachine          eState;
     protected GameObject            leftWall, rightWall;
     protected int                   moveDirection;
-    protected float                 waitTime;
-    protected float                 currentWaitTime;
+    //protected float                 waitTime;
+    protected float                 timeStandedInLine;
+    protected float                 timeWaitedForOrder;
     protected Vector3               destination;
     protected CollisionDetection    _collision;
     protected Shop                  _shop; //point of interest
@@ -26,9 +38,11 @@ public class BasicAI : MonoBehaviour {
     protected Recepe                 foodToOrder;
     protected ConsumerRating        _serviceFeedback;
     protected District              _district;
+    protected SpriteRenderer        _spriteRenderer;
 
     //Random time between X and Y this pedestrian will wait in line.
-    private Vector2  maxWaitTime;
+    //private Vector2  maxWaitTime;
+    private float maxWaitInLineTime;
 
 
     void Start () {
@@ -36,7 +50,8 @@ public class BasicAI : MonoBehaviour {
         _shop       = GameObject.Find(POIName).GetComponent<Shop>();
         leftWall    = GameObject.Find("leftWall");
         rightWall   = GameObject.Find("rightWall");
-        _thoughtsProcessor   = GetComponentInChildren<ThoughtProcessor>();
+        _thoughtsProcessor  = GetComponentInChildren<ThoughtProcessor>();
+        _spriteRenderer     = GetComponent<SpriteRenderer>();
         _district = District.Instance;
         _serviceFeedback = null;
 
@@ -65,9 +80,10 @@ public class BasicAI : MonoBehaviour {
         if(_collision.left || _collision.right) {
             this.gameObject.SetActive(false);
             return;
-        } 
+        }
 
-        if (_collision.left || _collision.right)  //Hide thoughts when reaching destination\walls
+        //Hide thoughts when reaching destination\walls
+        if (_collision.left || _collision.right)
             _thoughtsProcessor.HideAll();
 
         transform.Translate(deltaMovement);
@@ -79,10 +95,12 @@ public class BasicAI : MonoBehaviour {
             return;
         if (CurrentState == StateMachine.standingInLine)
             deltaMovement.x = 0;
-        currentWaitTime += Time.deltaTime;
-        if (currentWaitTime >= waitTime) {
+
+        this.timeStandedInLine += Time.deltaTime;
+
+        if (this.timeStandedInLine >= MaxWaitInLine) {
             this.eState = StateMachine.walking;
-            waitTime = currentWaitTime = 0;
+            this.maxWaitInLineTime = -1;
             _thoughtsProcessor.ShowFeedback(Rating.Grade.F, true);
             _shop.ClientWalkedAway(this);
         }
@@ -95,13 +113,14 @@ public class BasicAI : MonoBehaviour {
         if (CurrentState != StateMachine.waitingForOrder)
             return;
 
+        this.timeWaitedForOrder += Time.deltaTime;
         _thoughtsProcessor.ShowAction(ActionThoughts.Actions.WaitingForOrder, true);
         //_thoughtsProcessor.ShowFoodChoice(foodToOrder.Icon, true);
     }//WaitingForOrderState
 
 
     public void DeclineService() {
-        _thoughtsProcessor.ShowFeedback(Rating.Grade.F, true);
+        //_thoughtsProcessor.ShowFeedback(Rating.Grade.F, true);
         eState = StateMachine.walking;
         _shop.ClientWalkedAway(this);
     }//DeclineService
@@ -115,12 +134,10 @@ public class BasicAI : MonoBehaviour {
         }
         this.eState = StateMachine.walking;
         
-        _serviceFeedback = _district.MakeFeedback(ServicePrefs, 
-                                                            order, 
-                                                            currentWaitTime);
+        _serviceFeedback = _district.MakeFeedback(ServicePrefs, order, timeStandedInLine);
 
-        float satisfaction = _serviceFeedback.Points;
-        _thoughtsProcessor.ShowFeedback(ServicePrefs.FinalGrade, true);
+        float satisfaction = (float)_serviceFeedback.ServiceGrade;
+        _thoughtsProcessor.ShowFeedback(ServicePrefs.ServiceGrade, true);
         float tipAmount = (satisfaction / 100) * order.Cash.Count;
 
         //Show tip amount as a floating text object
@@ -131,7 +148,7 @@ public class BasicAI : MonoBehaviour {
         }//if floating text
 
         if (LevelStats.Instance != null) {
-            ConsumerReport cr = new ConsumerReport(_serviceFeedback, this.name, currentWaitTime);
+            ConsumerReport cr = new ConsumerReport(_serviceFeedback, this.name, timeStandedInLine);
             LevelStats.Instance.AddReport(cr);
         }
 
@@ -156,19 +173,22 @@ public class BasicAI : MonoBehaviour {
             foodToOrder = _shop.RecepeToServe;
             if (foodToOrder == null) {      //PARANOIA??? Why would that ever happened.
                 eState = StateMachine.walking;
+                GameUtils.Utils.WarningMessage(this.name + " received a null recipe obj!");
                 return;
             }
 
-            this.maxWaitTime = District.Instance.MaxWaitTime;
-            waitTime = Random.Range(maxWaitTime.x, maxWaitTime.y);
+            //Vector2 waittimeRange = District.Instance.MaxWaitTime;
+            //this.maxWaitTime = Random.Range(waittimeRange.x, waittimeRange.y);
+            //waitTime = Random.Range(maxWaitTime.x, maxWaitTime.y);
         }//if standing in line
     }//SetState
 
 
     public void Respawn() {
         this.moveDirection = MoveTowardsDirection(true);
-        currentWaitTime = 0;
-        waitTime = 0;
+        timeStandedInLine = 0;
+        timeWaitedForOrder = 0;
+        this.maxWaitInLineTime = -1; //value not yet being randomized based on District
         velocity = Vector2.zero;
         Speed = Random.Range(SpeedRange.x, SpeedRange.y);
         eState = StateMachine.walking;
@@ -186,6 +206,8 @@ public class BasicAI : MonoBehaviour {
             spawnPosition.x += leftWall.GetComponent<BoxCollider2D>().size.x / 2;
         }
         this.transform.position = spawnPosition;
+
+        _spriteRenderer.color = new Color(Random.value, Random.value, Random.value);
     }//Reset
 
 

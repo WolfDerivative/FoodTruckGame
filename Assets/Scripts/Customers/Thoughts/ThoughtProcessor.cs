@@ -46,7 +46,7 @@ public class ThoughtProcessor : Thoughts {
     }//ShowThoughts
 
 
-    public void ShowFeedback(ConsumerRating.Grade grade, bool state) {
+    public void ShowFeedback(Rating.Grade grade, bool state) {
         _foodThoughts.Hide();
         _actionThoughts.Hide();
 
@@ -56,13 +56,13 @@ public class ThoughtProcessor : Thoughts {
     }//ShowFeedback
 
     
-    public FeedbackThoughts.Feedbacks FeedbackByRating(ConsumerRating.Grade grade) {
+    public FeedbackThoughts.Feedbacks FeedbackByRating(Rating.Grade grade) {
         switch (grade) {
-            case (ConsumerRating.Grade.A):
+            case (Rating.Grade.A):
                 return FeedbackThoughts.Feedbacks.Happy;
-            case (ConsumerRating.Grade.B):
+            case (Rating.Grade.B):
                 return FeedbackThoughts.Feedbacks.Neutral;
-            case (ConsumerRating.Grade.C):
+            case (Rating.Grade.C):
                 return FeedbackThoughts.Feedbacks.Sad;
             default:
                 return FeedbackThoughts.Feedbacks.Angry;

@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-[RequireComponent(typeof(BoxCollider2D), typeof(SpriteRenderer))]
+[RequireComponent(typeof(BoxCollider2D), typeof(SpriteRenderer), typeof(ShopProperties))]
 public class Shop : MonoBehaviour {
 
     public static Shop Instance;
 
-    [Range(0, 1)]public float ChanceOfAttraction = 0.5f;
-    public int MaxOrders = 2;
-    public int MaxPrepedFood = 2;
+    //[Range(0, 1)]public float ChanceOfAttraction = 0.5f;
+    //public int MaxOrders = 2;
     public List<BasicAI> WaitingQ   { get { return this.waitingQueue; } }
     public List<BasicAI> OrderedQ   { get { return this.orderedQueue; } }
     public Storage StorageState { get { return _shopStorage; } }
@@ -20,8 +19,9 @@ public class Shop : MonoBehaviour {
     //public List<Food> FoodMenu;
     public Recepe RecepeToServe;
 
-    protected SpriteRenderer _spriteRenderer;
-    protected BoxCollider2D _boxCollider;
+    protected SpriteRenderer    _spriteRenderer;
+    protected BoxCollider2D     _boxCollider;
+    protected ShopProperties    _shopProps;
     protected Dictionary<BasicAI, Recepe> cooking;
     protected Storage _shopStorage;
     protected bool bIsEnoughIngredients { get { return ValidateStockForRecepe(); } }
@@ -31,9 +31,10 @@ public class Shop : MonoBehaviour {
 
 
     public void Start() {
-        Instance        = this;
+        Instance = this;
         this.initComponents();
-        _shopStorage    = GameManager.Instance.GlobalStorage;
+        _shopStorage = GameManager.Instance.GlobalStorage;
+        _shopProps = GetComponent<ShopProperties>();
         Reset();
     }//Start
 
@@ -53,7 +54,7 @@ public class Shop : MonoBehaviour {
     }
 
     public void LateUpdate() {
-        if (orderedQueue.Count < MaxOrders)
+        if (orderedQueue.Count < _shopProps.MaxOrders)
             TakeOrder();
         if(orderedQueue.Count > 0)
             CookAndServe();
@@ -103,6 +104,7 @@ public class Shop : MonoBehaviour {
             GameUtils.Utils.WarningMessage(client.name + 
                 " is not waiting-for-order while ServeClient is called! [" + client.CurrentState + "]");
         }
+
         float cash = client.RecieveOrder(toServe);
         _shopStorage.Cash.Add(cash);
         if (orderedQueue.Contains(client)) {
@@ -125,6 +127,15 @@ public class Shop : MonoBehaviour {
             }//if
             Recepe foodOnTheGrill = cooking[client];
             bool isCooked = foodOnTheGrill.Cook(Time.deltaTime);
+
+            if (i == 0) { //try fastcook only for the first in queue
+                bool isFastCook = _shopProps.TryFaskCook();
+                if (isFastCook) {
+                    Debug.Log("Fast Cook worked on " + client.name);
+                    isCooked = true;
+                }
+            }//of first in line
+
             if (isCooked) {
                 toRemove.Add(client);
                 ServeClient(client, foodOnTheGrill);
@@ -173,6 +184,7 @@ public class Shop : MonoBehaviour {
             this.orderedQueue.Remove(client);
     }//ClientWalkedAway
 
+
     public void SetStorage(Storage st) { this._shopStorage = st; }
 
 
@@ -189,7 +201,10 @@ public class Shop : MonoBehaviour {
         if (!isPriceGood) {
             Debug.Log("Bad Price!");
             return;
-        }
+        }//if bad price
+
+        if (_shopProps.TryAttractByChance() == false)
+            return;
 
         pedestrian.SetState(BasicAI.StateMachine.standingInLine);
         waitingQueue.Add(pedestrian);
@@ -198,11 +213,13 @@ public class Shop : MonoBehaviour {
 
     public void OnEnable() {
         SceneManager.sceneLoaded += OnSceneLoaded;
-    }
+    }//OnEnable
+
 
     public void OnDisable() {
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }//OnDisable
+
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
         this.initComponents();

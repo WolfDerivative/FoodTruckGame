@@ -49,9 +49,9 @@ public class District: MonoBehaviour {
     /// <param name="timeWaited">How long did he wait in line.</param>
     /// <returns></returns>
     public ConsumerRating MakeFeedback(ConsumerRating prefs, Recepe received, float timeWaited) {
-       var feedback = prefs.GetSatisfactionRatio(received, timeWaited);
+       var feedback = prefs.RateService(received, timeWaited);
 
-        AddReputation(feedback.Points);
+        //AddReputation(feedback.Points);
         return feedback;
     }//GetSatisfactionRatio
 

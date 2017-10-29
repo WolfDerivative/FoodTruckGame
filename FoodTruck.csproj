@@ -260,6 +260,7 @@
     <Compile Include="Assets\Scripts\Shop\Resources.cs" />
     <Compile Include="Assets\Scripts\Shop\Shop.cs" />
     <Compile Include="Assets\Scripts\Shop\ShopDebuggingConsole.cs" />
+    <Compile Include="Assets\Scripts\Shop\ShopProperties.cs" />
     <Compile Include="Assets\Scripts\Shop\ShopStorage.cs" />
     <Compile Include="Assets\Scripts\Shop\Storage.cs" />
     <Compile Include="Assets\Scripts\UI\CalendarUI.cs" />

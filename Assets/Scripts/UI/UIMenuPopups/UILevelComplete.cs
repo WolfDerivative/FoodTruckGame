@@ -10,6 +10,7 @@ public class UILevelComplete : UIMenuPopup {
     private Text tGradeValue;
     private Text tServedValue;
     private Text tRepValue;
+    private bool bIsStatsShown;
 
 
     public override void Start() {
@@ -17,14 +18,19 @@ public class UILevelComplete : UIMenuPopup {
         tGradeValue = this.getTextCmp(GradeValueGO);
         tServedValue = this.getTextCmp(ServedValueGO);
         tRepValue = this.getTextCmp(ReputationValueGO);
+        this.bIsStatsShown = false;
     }//Start
 
 
     public void Update() {
-        if (LevelManager.Instance.IsLevelComplete)
+        if (LevelManager.Instance.IsLevelComplete) {
+            if(bIsStatsShown)
+                return;
             this.Show();
-        else
+            this.bIsStatsShown = true;
+        } else {
             this.Hide();
+        }
     }//Update
 
 

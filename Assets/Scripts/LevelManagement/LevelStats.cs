@@ -25,27 +25,30 @@ public class LevelStats : MonoBehaviour {
     }//AddReport
 
 
-    public ConsumerRating.Grade GetAverageGrade() {
-        int avg = 0;
+    public Rating.Grade GetAverageGrade() {
+        float weight = 0;
         for(int i=0; i < reports.Count; i++) {
-            int grade = (int)reports[i].Rating.FinalGrade;
-            avg += grade;
+            Rating.Grade grade = reports[i].Rating.ServiceGrade;
+            weight += (int)reports[i].Rating.ServiceGrade;
         }//for
+        if (reports.Count > 0)
+            weight = Mathf.FloorToInt(weight / reports.Count);
         Rating rating = new Rating();
-        int gradeInt = 0;
-        if(reports.Count > 0)
-            Mathf.FloorToInt(avg / reports.Count);
-        return rating.IntToEnumGrade(gradeInt);
+        return rating.IntToEnumGrade(Mathf.FloorToInt(weight));
     }//GetAverageGrade
-}//class
+
+}//class LevelStats
 
 
+/// <summary>
+///  Collect Service Reports from consumers when they recieve their order.
+/// </summary>
 [System.Serializable]
 public class ConsumerReport {
 
-    public ConsumerRating Rating { get { return this._rating; } }
-    public string Name { get { return this.sConsumerName; } }
-    public float TimeWaited { get { return this.timeWaited; } }
+    public ConsumerRating Rating    { get { return this._rating; } }
+    public string Name              { get { return this.sConsumerName; } }
+    public float TimeWaited         { get { return this.timeWaited; } }
 
     protected ConsumerRating _rating;
     protected string sConsumerName;
@@ -55,7 +58,7 @@ public class ConsumerReport {
         this._rating = r;
         this.sConsumerName = name;
         this.timeWaited = waited;
-    }
+    }//ctor
 
 
     public override string ToString() {
@@ -63,5 +66,5 @@ public class ConsumerReport {
         result += Name + ": ";
         result += _rating;
         return result;
-    }
+    }//ToString
 }//class

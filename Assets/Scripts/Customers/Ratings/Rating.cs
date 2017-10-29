@@ -9,20 +9,18 @@ public class Rating {
     public float C = 0;
     public float B = 1;
     public float A = 2;
-
-    public virtual float Points { get { return finalScore; } }
+ 
     public virtual Grade FinalGrade { get { return finalGrade; } }
 
     private Grade finalGrade; //set when RatioByRange is called.
-    private float finalScore;
 
     /// <summary>
-    ///  Return points value\bonus for the provided grade. Note: it is not
+    ///  Return points value for the provided grade. Note: it is not
     /// the enum value!
     /// </summary>
     /// <param name="grade">Grade to get value bonus of.</param>
     /// <returns>Value bonus of the given grade.</returns>
-    public float PointsFromGrade(Grade grade) {
+    public float GradeWeight(Grade grade) {
         switch (grade) {
             case (Grade.A):
                 return A;
@@ -44,7 +42,7 @@ public class Rating {
     /// <param name="received">Feedback value given by the customer.</param>
     /// <param name="isReverse">X becomes upper bracket (e.g. Y).</param>
     public virtual Grade GradeByRange(float received) {
-        return Grade.F;
+        throw new System.NotImplementedException();
     }//SatisfactionValue
 
 
@@ -100,5 +98,4 @@ public class Rating {
 
 
     public void SetGrade(Grade grd) { this.finalGrade = grd; }
-    public void SetScore(float score) { this.finalScore = score; }
 }//Rating

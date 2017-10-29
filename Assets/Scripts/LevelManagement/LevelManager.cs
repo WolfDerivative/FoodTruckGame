@@ -4,16 +4,17 @@ using UnityEngine.SceneManagement;
 public class LevelManager : MonoBehaviour {
 
     public static LevelManager Instance;
-    public bool IsLevelComplete { get { return this.checkLevelComplete(); } }
-    public int TotalPotentialCustommers { get { return _weekday.WaveCmp.TotalSpawns; } }
+    [Tooltip("Do not save the game in the end of the level. For testing purposes")]
+    public bool DontSave = false;
+    public bool IsLevelComplete             { get { return this.checkLevelComplete(); } }
+    public int  TotalPotentialCustommers    { get { return _weekday.WaveCmp.TotalSpawns; } }
 
     protected float waitBeforeLevelComplete = 3f;
 
-    private float theEndCountdown;
-    private WeekdayBehaviour _weekday;
-    private bool bHasSaved;
-    private DistrictData districtSaveData;
-    private float gameSpeedMultiplier = 1f;
+    private float               theEndCountdown;
+    private WeekdayBehaviour    _weekday;
+    private bool                bHasSaved;
+    private DistrictData        districtSaveData;
 
 
     public void Start() {
@@ -88,6 +89,8 @@ public class LevelManager : MonoBehaviour {
 
 
     public void OnDestroy() {
+        if(DontSave)
+            return;
         this.districtSaveData.SetReputation(District.Instance.ReputationStatus);
         GameManager.Instance.SaveGameDistrict(this.districtSaveData);
         Calendar.Instance.NextDay();

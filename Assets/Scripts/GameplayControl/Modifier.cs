@@ -3,6 +3,7 @@
 [System.Serializable]
 public class Modifier {
 
+    public Population[] DistrictPopulation;
     [Tooltip("Wave curve multiplier. It is a Max spawn amount on the key curve. E.g. range=(curve_value, curve_value + curve_value*SpawnMultiplier);")]
     public float SpawnRange = 1;
     [Tooltip("Adds or substructs SpawnDelay amount to the current wave SpawnDelay.")]

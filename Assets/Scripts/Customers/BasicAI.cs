@@ -148,7 +148,7 @@ public class BasicAI : MonoBehaviour {
         }//if floating text
 
         if (LevelStats.Instance != null) {
-            ConsumerReport cr = new ConsumerReport(_serviceFeedback, this.name, timeStandedInLine);
+            ConsumerReport cr = new ConsumerReport(_serviceFeedback, this);
             LevelStats.Instance.AddReport(cr);
         }
 

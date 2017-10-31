@@ -18,6 +18,8 @@ public class ObjectPool: MonoBehaviour {
     public bool IsDynamic = true;
     [Tooltip("How many objects of the pool can be active simultaneously. '0' means no limit.")]
     public int SpawnLimit = 0;
+    [Tooltip("Chance for PoolManager to use this pool to spawn.")]
+    [Range(0f, 1f)]public float SpawnChance = 0.5f;
     [Tooltip("Name of the GameObject in the scene to where to store pool instancies. If object not found - it will be created with that name.")]
     public string StorageBucketName = "Bucket";
 
@@ -131,5 +133,20 @@ public class ObjectPool: MonoBehaviour {
             bucket.name = StorageBucketName;
         }//if null
     }//createBucket
+
+
+    public void SetObjectToPool(GameObject prefabGo) {
+        ObjectToPool = prefabGo;
+    }//SetObjectToPool
+
+
+    public void SetSpawnChance(float val) {
+        SpawnChance = val;
+    }//SetSpawnChance
+
+
+    public void SetPoolSize(int size) {
+        PoolSize = size;
+    }//SetPoolSize
 
 }//Class

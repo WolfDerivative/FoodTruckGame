@@ -223,9 +223,6 @@
     <Compile Include="Assets\Scripts\Controls\JumpControls.cs" />
     <Compile Include="Assets\Scripts\Controls\PlatformerControls2d.cs" />
     <Compile Include="Assets\Scripts\Customers\BasicAI.cs" />
-    <Compile Include="Assets\Scripts\Customers\Ratings\ConsumerRating.cs" />
-    <Compile Include="Assets\Scripts\Customers\Ratings\Rating.cs" />
-    <Compile Include="Assets\Scripts\Customers\Ratings\ServicePreference.cs" />
     <Compile Include="Assets\Scripts\Customers\Thoughts\ActionThoughts.cs" />
     <Compile Include="Assets\Scripts\Customers\Thoughts\FeedbackThoughts.cs" />
     <Compile Include="Assets\Scripts\Customers\Thoughts\FoodThoughts.cs" />
@@ -240,6 +237,7 @@
     <Compile Include="Assets\Scripts\GameplayControl\Modifier.cs" />
     <Compile Include="Assets\Scripts\GameplayControl\ObjectPool.cs" />
     <Compile Include="Assets\Scripts\GameplayControl\PoolManager.cs" />
+    <Compile Include="Assets\Scripts\GameplayControl\Population.cs" />
     <Compile Include="Assets\Scripts\GameplayControl\SpawnProgression.cs" />
     <Compile Include="Assets\Scripts\GameplayControl\Wave.cs" />
     <Compile Include="Assets\Scripts\LevelManagement\District.cs" />
@@ -247,6 +245,9 @@
     <Compile Include="Assets\Scripts\LevelManagement\LevelManager.cs" />
     <Compile Include="Assets\Scripts\LevelManagement\LevelStats.cs" />
     <Compile Include="Assets\Scripts\LookAlive.cs" />
+    <Compile Include="Assets\Scripts\Ratings\ConsumerRating.cs" />
+    <Compile Include="Assets\Scripts\Ratings\Rating.cs" />
+    <Compile Include="Assets\Scripts\Ratings\ServicePreference.cs" />
     <Compile Include="Assets\Scripts\Resources\Ingredient.cs" />
     <Compile Include="Assets\Scripts\Resources\Ingredients\Brain.cs" />
     <Compile Include="Assets\Scripts\Resources\Ingredients\Bread.cs" />

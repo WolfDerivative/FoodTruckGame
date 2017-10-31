@@ -49,7 +49,10 @@ public class GameManager : MonoBehaviour {
     public Savable LoadGame() {
         GameData gd = SavabledData.GameStateData;
 
-        Calendar.Instance.SetDay((Calendar.Day)gd.CurrentDay);
+        //For testing purposes, allow Calendar override flag to set Today, instead
+        //of loading from the file.
+        if(!Calendar.Instance.IsOverrideToday)
+            Calendar.Instance.SetDay((Calendar.Day)gd.CurrentDay);
         if(gd.SavedStorage != null)
              GlobalStorage = gd.SavedStorage;
 

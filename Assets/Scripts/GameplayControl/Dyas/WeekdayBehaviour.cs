@@ -24,11 +24,12 @@ public class WeekdayBehaviour : MonoBehaviour {
     }//WaveCmp
 
     protected Wave _wave;
+    protected PoolManager _poolmanager;
 
 
     public void Start() {
-        Init();
         _wave = GetComponent<Wave>();
+        Init();
     }//Start
 
 
@@ -43,13 +44,43 @@ public class WeekdayBehaviour : MonoBehaviour {
             return;
         }//if Prefab not set
 
+
         GameObject progressionInstance = Instantiate(modifier.ProgressionPrefab);
         SpawnProgression progression = progressionInstance.GetComponent<SpawnProgression>();
         if (progression == null) {
             GameUtils.Utils.WarningMessage("Active Day SpawnProgression is not set!\n" + modifier);
         }//if wave cmp is null
+
         modifier.SetProgression(progression);
+        this.createPopulation();
     }//Init
+
+
+    private void createPopulation() {
+        //Creating PoolManager object
+        GameObject poolMngGO = new GameObject();
+        poolMngGO.name = "PoolManager";
+        _poolmanager = poolMngGO.AddComponent<PoolManager>();
+
+        //Population distribution based of the Today's modifier
+        Population[] populationMod = GetModifier().DistrictPopulation;
+        //Create as manu object pools as there are population diversity
+        for (int i = 0; i < populationMod.Length; i++) {
+            GameObject poolPrefab = populationMod[i].CustomerPrefab;
+            ObjectPool objPool = _poolmanager.CreatePool(poolPrefab);
+            objPool.SetSpawnChance(populationMod[i].SpawnChance);
+
+            //Create some amount of customers GO based of its SpawnChance
+            //and overall level's total spawn amount.
+            float poolSizePercent = GetProgression().GetTotalValues() *
+                                                populationMod[i].SpawnChance;
+            //Half of the size percent should be enough. Pool is set to "Dynamic" by
+            //default, so it will handle shortage of the Instancies on demand.
+            int poolSize = Mathf.FloorToInt(poolSizePercent / 2);
+            objPool.SetPoolSize(poolSize);
+        }//for
+        _wave.SetPoolManager(_poolmanager);
+    }//createPopulation
 
 
     /// <summary>
@@ -59,7 +90,7 @@ public class WeekdayBehaviour : MonoBehaviour {
         DayModifier modifier = GetModifier();
         if (modifier.Progression != null)
             return modifier.Progression;
-        Init();
+        GameUtils.Utils.WarningMessage("Progression is not set for " + this.name);
         return modifier.Progression;
     }//GetTodaysWave
 

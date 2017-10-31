@@ -2,9 +2,11 @@
 
 public class Calendar : MonoBehaviour {
     public static Calendar Instance;
-
     public enum Day { Mon, Tue, Wed, Thu, Fri, Sat, Sun }
 
+    [Tooltip("For debugging and testing")]
+    public bool IsOverrideToday = false;
+    public Day OverrideToday = Day.Mon;
     public Day Today { get { return this.eToday; } }
 
     private Day eToday;
@@ -12,6 +14,10 @@ public class Calendar : MonoBehaviour {
 
     public void Start(){
         Instance = this;
+        #if UNITY_EDITOR
+            if (IsOverrideToday)
+                SetDay(OverrideToday);
+        #endif
     }//Start
 
 

@@ -13,6 +13,7 @@ public class Shop : MonoBehaviour {
     public List<BasicAI> WaitingQ   { get { return this.waitingQueue; } }
     public List<BasicAI> OrderedQ   { get { return this.orderedQueue; } }
     public Storage StorageState { get { return _shopStorage; } }
+    public int MaxWaitingQueue  { get { return this.maxWaitingCustomers; } }
 
     public List<BasicAI> waitingQueue;  //FIXME: make it private
     public List<BasicAI> orderedQueue;  //FIXME: make it private
@@ -25,6 +26,8 @@ public class Shop : MonoBehaviour {
     protected Dictionary<BasicAI, Recepe> cooking;
     protected Storage _shopStorage;
     protected bool bIsEnoughIngredients { get { return ValidateStockForRecepe(); } }
+
+    private int maxWaitingCustomers;
 
 
     /* ----------------------------------------------------------------------- */
@@ -208,6 +211,9 @@ public class Shop : MonoBehaviour {
 
         pedestrian.SetState(BasicAI.StateMachine.standingInLine);
         waitingQueue.Add(pedestrian);
+
+        if(waitingQueue.Count > this.maxWaitingCustomers)
+            this.maxWaitingCustomers = waitingQueue.Count;
     }//OnTriggerEnter2D
 
 

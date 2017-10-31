@@ -5,8 +5,6 @@ public class District: MonoBehaviour {
 
     public static District Instance;
 
-    //[Tooltip("Prefered recepe by this district.")]
-    //public RecepePreference     RecepePref;
     [Tooltip("Prefered price range for this district.")]
     public PricePreference      PricePref;
     [Tooltip("How much time customers are willing to wait.")]
@@ -17,7 +15,6 @@ public class District: MonoBehaviour {
     public float MaxReputationValue = 100;
     //used by BasicAI to get randoim wait value
     public Vector2 MaxWaitTime = new Vector2(4.5f, 6f);
-    public ConsumerRating Ratings;
     public float ReputationStatus { get { return this.reputation; } }
 
     private float reputation;

@@ -27,7 +27,7 @@ public class Wave : MonoBehaviour {
 
 
     public void Start() {
-        _poolManager = PoolManager.Instance;
+        //_poolManager = PoolManager.Instance;
         _progression = GetComponent<SpawnProgression>();
         bIsCanSpawn = false;
         timeout = _progression.SpawnDelay;
@@ -35,6 +35,8 @@ public class Wave : MonoBehaviour {
 
 
     public void Update() {
+        if(_poolManager == null)
+            return;
         if(this.bIsCanSpawn)
             StartSpawning();
     }//Update
@@ -115,6 +117,10 @@ public class Wave : MonoBehaviour {
         _poolManager.PickFromPool();
     }//Spawn
 
+
+    public void SetPoolManager(PoolManager pmg) {
+        _poolManager = pmg;
+    }//SetPoolManager
 
     public void SetCanSpawn(bool state) {
         this.bIsCanSpawn = state;

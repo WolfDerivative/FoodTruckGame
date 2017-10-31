@@ -51,6 +51,10 @@ public class UILevelComplete : UIMenuPopup {
         this.showLevelGrade();
         this.showSpawns();
         this.showReputation();
+
+        Debug.Log("Wated in line: " + LevelStats.Instance.AvgWaitTimeInLine());
+        Debug.Log("Waited for order: " + LevelStats.Instance.AvgWaitTimeForOrder());
+        Debug.Log("Max Waiting Customers: " + LevelStats.Instance.MaxWaitingCustomers);
     }//Show
 
 

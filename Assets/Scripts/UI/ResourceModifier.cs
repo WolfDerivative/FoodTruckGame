@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 public class ResourceModifier : MonoBehaviour {
 
+    public GameObject UnitsMod;
     [Tooltip("Type of resource that is being modified by this object.")]
     public Storage.ResourceType ModType;
     [Tooltip("How much units to add per button click.")]
@@ -11,7 +12,6 @@ public class ResourceModifier : MonoBehaviour {
     [Tooltip("Object for the display value.")]
     public string GONameValue       = "Value";
     public string GONameAdd         = "Add";
-
 
     public float CurrentValue {
         get {
@@ -25,15 +25,18 @@ public class ResourceModifier : MonoBehaviour {
         }//get
     }//UnitsToPurchase
 
-
     public virtual Ingredient IngredientType {
         get {
             return GameManager.Instance.GlobalStorage.ObjectFromType(ModType);
         }//get
     }//IngredientType
 
-    protected Button bAdd, bSubstruct;
+    protected Button btnAdd, btnSubstruct;
     protected Text   tValue;
+    protected HoldableButton _btnAddHoldable, _btnSubstructHoldable;
+    protected UIEventManager _uiEventManager;
+
+    private float modifierTimeout = 0.2f;
 
     /* *********************************************************************** */
 
@@ -41,16 +44,58 @@ public class ResourceModifier : MonoBehaviour {
     public virtual void Start() {
         foreach (Transform go in this.transform) {
             if (go.name == GONameAdd)
-                SetBtn(go.gameObject, ref bAdd);
+                SetBtn(go.gameObject, ref btnAdd);
             if (go.name == GONameSubstruct)
-                SetBtn(go.gameObject, ref bSubstruct);
+                SetBtn(go.gameObject, ref btnSubstruct);
             if (go.name == GONameValue)
                 SetTxt(go.gameObject, ref tValue);
         }//foreach
 
-        bAdd.onClick.AddListener(delegate { Add(); });
-        bSubstruct.onClick.AddListener(delegate { Substruct(); });
+        _btnAddHoldable         = this.btnAdd.gameObject.AddComponent<HoldableButton>();
+        _btnSubstructHoldable   = this.btnSubstruct.gameObject.AddComponent<HoldableButton>();
+
+        this.btnAdd.onClick.AddListener(delegate { Add(); });
+        this.btnSubstruct.onClick.AddListener(delegate { Substruct(); });
+        if (UnitsMod != null) {
+            UnitsMod.SetActive(false);
+            _uiEventManager = this.UnitsMod.GetComponent<UIEventManager>();
+        }
     }//Start
+
+
+    public void Update() {
+        if(UnitsMod == null)
+            return;
+        this.addOrSubstructButton(ref _btnAddHoldable, false);
+        this.addOrSubstructButton(ref _btnSubstructHoldable, true);
+    }//Update
+
+
+    private void addOrSubstructButton(ref HoldableButton holdable, bool isSubstruct) {
+        if (holdable.IsButtonDown && !holdable.IsButtonReleased) {
+            if (holdable.ButtonUsed == KeyCode.Mouse1) {
+                UnitsMod.SetActive(true);
+                UnitsMod.transform.SetParent(holdable.transform);
+                _uiEventManager.RectTransformCmp.anchoredPosition = Vector3.zero;
+                _uiEventManager.RectTransformCmp.localScale = Vector3.one;
+                _uiEventManager.SetMarket(this);
+            }//if holding mouse1
+            if (holdable.ButtonUsed == KeyCode.Mouse0) {
+                if (holdable.HoldTime >= this.modifierTimeout) {
+                    if(isSubstruct)
+                        Substruct();
+                    else
+                        Add();
+                    holdable.ResetHoldTime();
+                }
+            }//if holding mouse0
+        }//if holding button
+
+        if (holdable.IsButtonReleased) { //FIXME: check of Mouse1 is still holding
+            UnitsMod.SetActive(false);
+            UnitsMod.transform.SetParent(null);
+        }//if
+    }//addOrSubstructButton
 
 
     /// <summary>
@@ -60,11 +105,19 @@ public class ResourceModifier : MonoBehaviour {
     public virtual float Add(float amount = float.NegativeInfinity) {
         if (amount == float.NegativeInfinity)
             amount = this.UnitsPerPurchase;
+
         //How many units can be added to reach allowed Max.
         float valueLimit = IngredientType.Max - IngredientType.Count;
+
+        if(valueLimit == 0)
+            return 0;
+
         //Number of units potentially extending the limit.
-        float limitOverflow = this.CurrentValue + amount;
-        float unitsToAdd = (limitOverflow > valueLimit) ? limitOverflow - valueLimit : amount;
+        float newCartValue = this.CurrentValue + amount;
+        //when valueLimit = 7, current = 5 and newCartValue = 9, means new
+        //cart value will overflow the limit. Therefore, just add as many units
+        //needed to fill reach the limit: valueLimit -  current = 2 -> amount = 2
+        float unitsToAdd = (newCartValue > valueLimit) ? valueLimit - this.CurrentValue : amount;
 
         return unitsToAdd;
     }//Add

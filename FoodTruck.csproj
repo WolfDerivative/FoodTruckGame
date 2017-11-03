@@ -266,9 +266,11 @@
     <Compile Include="Assets\Scripts\Shop\Storage.cs" />
     <Compile Include="Assets\Scripts\UI\CalendarUI.cs" />
     <Compile Include="Assets\Scripts\UI\CameraToCanvas.cs" />
+    <Compile Include="Assets\Scripts\UI\HoldableButton.cs" />
     <Compile Include="Assets\Scripts\UI\RecepeUI.cs" />
     <Compile Include="Assets\Scripts\UI\ResourceModifier.cs" />
     <Compile Include="Assets\Scripts\UI\StorageUI.cs" />
+    <Compile Include="Assets\Scripts\UI\UIEventManager.cs" />
     <Compile Include="Assets\Scripts\UI\UIManager.cs" />
     <Compile Include="Assets\Scripts\UI\UIMenuPopups\UILevelComplete.cs" />
     <Compile Include="Assets\Scripts\UI\UIMenuPopups\UIMenuPopup.cs" />

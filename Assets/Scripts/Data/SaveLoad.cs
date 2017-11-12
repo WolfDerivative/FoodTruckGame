@@ -29,14 +29,24 @@ public class SaveLoad {
     }//SaveLoad
 
 
+    /// <summary>
+    ///  Save game state into a file and return a saved data.
+    /// Pass False to a second argument if you don't want to save into a file,
+    /// but rather only keep it in memory during runtime.
+    /// </summary>
+    /// <param name="data"> Savable data to save to file. </param>
+    /// <param name="writeToFile">Flag to indicate if data will be saved to a file or not.
+    ///                             Default = True -> write to file.
+    /// </param>
+    /// <returns></returns>
     public Savable Save(Savable data, bool writeToFile=false) {
-        BinaryFormatter bf = new BinaryFormatter();
-
-        FileStream file = File.Open(Application.persistentDataPath + SaveFile, FileMode.Create);
-
-        bf.Serialize(file, JsonUtility.ToJson(data));
+        if (writeToFile) {
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream file = File.Open(Application.persistentDataPath + SaveFile, FileMode.Create);
+            bf.Serialize(file, JsonUtility.ToJson(data));
+            file.Close();
+        }
         this.savefileData = data;
-        file.Close();
         return this.savefileData;
     }//Save
 

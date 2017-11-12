@@ -8,16 +8,14 @@ public class Shop : MonoBehaviour {
 
     public static Shop Instance;
 
-    //[Range(0, 1)]public float ChanceOfAttraction = 0.5f;
-    //public int MaxOrders = 2;
     public List<BasicAI> WaitingQ   { get { return this.waitingQueue; } }
     public List<BasicAI> OrderedQ   { get { return this.orderedQueue; } }
-    public Storage StorageState { get { return _shopStorage; } }
-    public int MaxWaitingQueue  { get { return this.maxWaitingCustomers; } }
+    public Storage StorageState     { get { return _shopStorage; } }
+    public int MaxWaitingQueue      { get { return this.maxWaitingCustomers; } }
 
     public List<BasicAI> waitingQueue;  //FIXME: make it private
     public List<BasicAI> orderedQueue;  //FIXME: make it private
-    //public List<Food> FoodMenu;
+
     public Recepe RecepeToServe;
 
     protected SpriteRenderer    _spriteRenderer;
@@ -54,7 +52,7 @@ public class Shop : MonoBehaviour {
         waitingQueue = new List<BasicAI>();
         orderedQueue = new List<BasicAI>();
         cooking = new Dictionary<BasicAI, Recepe>();
-    }
+    }//Reset
 
     public void LateUpdate() {
         if (orderedQueue.Count < _shopProps.MaxOrders)

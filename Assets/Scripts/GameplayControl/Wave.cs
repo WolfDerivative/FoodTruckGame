@@ -122,6 +122,7 @@ public class Wave : MonoBehaviour {
         _poolManager = pmg;
     }//SetPoolManager
 
+
     public void SetCanSpawn(bool state) {
         this.bIsCanSpawn = state;
 

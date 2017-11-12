@@ -16,7 +16,8 @@ public class ShopDebuggingConsole : MonoBehaviour {
 
 
     void Start () {
-        _shop = ShopGO.GetComponent<Shop>();
+        //_shop = ShopGO.GetComponent<Shop>();
+        _shop = Shop.Instance;
 
         _waitingCounterVisualisation = WaitingCountInfo.GetComponent<TextToWorld>();
         _orderedCounterVisualisation = OrderedCountInfo.GetComponent<TextToWorld>();
@@ -24,10 +25,19 @@ public class ShopDebuggingConsole : MonoBehaviour {
 	
 
 	void Update () {
+        if (_shop == null)
+            _shop = Shop.Instance;
+    }//Update
+
+    public void LateUpdate() {
+        if(_shop == null)
+            return;
+
         if (_waitingCounterVisualisation != null)
             _waitingCounterVisualisation.RenderText(_shop.WaitingQ.Count.ToString());
         if (_orderedCounterVisualisation != null)
             _orderedCounterVisualisation.RenderText(_shop.OrderedQ.Count.ToString());
-    }//Update
+    }//LateUpdate
+
 
 }//class

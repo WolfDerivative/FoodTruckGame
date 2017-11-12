@@ -6,11 +6,10 @@ public class UILevelComplete : UIMenuPopup {
     public GameObject GradeValueGO;
     public GameObject ServedValueGO;
     public GameObject ReputationValueGO;
-
+    
     private Text tGradeValue;
     private Text tServedValue;
     private Text tRepValue;
-    private bool bIsStatsShown;
 
 
     public override void Start() {
@@ -18,16 +17,14 @@ public class UILevelComplete : UIMenuPopup {
         tGradeValue = this.getTextCmp(GradeValueGO);
         tServedValue = this.getTextCmp(ServedValueGO);
         tRepValue = this.getTextCmp(ReputationValueGO);
-        this.bIsStatsShown = false;
     }//Start
 
 
-    public void Update() {
+    public void LateUpdate() {
         if (LevelManager.Instance.IsLevelComplete) {
-            if(bIsStatsShown)
+            if(IsStatsShown)
                 return;
             this.Show();
-            this.bIsStatsShown = true;
         } else {
             this.Hide();
         }
@@ -52,7 +49,7 @@ public class UILevelComplete : UIMenuPopup {
         this.showSpawns();
         this.showReputation();
 
-        Debug.Log("Wated in line: " + LevelStats.Instance.AvgWaitTimeInLine());
+        Debug.Log("Waited in line: " + LevelStats.Instance.AvgWaitTimeInLine());
         Debug.Log("Waited for order: " + LevelStats.Instance.AvgWaitTimeForOrder());
         Debug.Log("Max Waiting Customers: " + LevelStats.Instance.MaxWaitingCustomers);
     }//Show

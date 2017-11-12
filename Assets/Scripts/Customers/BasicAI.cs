@@ -134,7 +134,9 @@ public class BasicAI : MonoBehaviour {
         }
         this.eState = StateMachine.walking;
         
-        _serviceFeedback = _district.MakeFeedback(ServicePrefs, order, timeStandedInLine);
+        float totalWaitTime = this.timeStandedInLine + this.timeWaitedForOrder;
+
+        _serviceFeedback = _district.MakeFeedback(ServicePrefs, order, totalWaitTime);
 
         float satisfaction = (float)_serviceFeedback.ServiceGrade;
         _thoughtsProcessor.ShowFeedback(ServicePrefs.ServiceGrade, true);

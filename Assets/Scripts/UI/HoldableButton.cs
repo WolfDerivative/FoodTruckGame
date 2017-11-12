@@ -19,6 +19,15 @@ public class HoldableButton : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         }//get
     }//ButtonCmp
 
+    public Image ImageCmp {
+        get {
+            if (this.img == null)
+                this.img = GetComponent<Image>();
+            return this.img;
+        }//get
+    }//ButtonCmp
+
+
     private bool bIsPressed;
     private bool bIsReleased;
     private bool bIsHoveredOver;
@@ -26,17 +35,19 @@ public class HoldableButton : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     private float holdTime;
     PointerEventData.InputButton mouseBtnUsed;
     private Button btn;
+    private Image img;
 
 
-    public void Start() {
+    public virtual void Start() {
         this.bIsPressed = this.bIsReleased = false;
         this.bIsHoveredOver = this.bIsHoveredOut = false;
         holdTime = 0;
-        btn = GetComponent<Button>();
+        this.btn = GetComponent<Button>();
+        this.img = GetComponent<Image>();
     }//Start
 
 
-    public void Update() {
+    public virtual void Update() {
         if (this.bIsPressed)
             this.holdTime += Time.deltaTime;
     }//Update
@@ -46,7 +57,7 @@ public class HoldableButton : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     ///  Release "out" flags (e.g. Released, HoveredOut etc) so that they stay
     /// True just for one frame. Helps to detect those "out" events during runtime.
     /// </summary>
-    public void LateUpdate() {
+    public virtual void LateUpdate() {
         if(this.bIsReleased)
             this.bIsReleased = false;
         if(this.bIsHoveredOut)
@@ -71,25 +82,25 @@ public class HoldableButton : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     }//InputButtonToKeycode
 
 
-    public void OnPointerDown(PointerEventData eventData) {
+    public virtual void OnPointerDown(PointerEventData eventData) {
         this.bIsPressed = true;
         this.holdTime = 0;
         this.mouseBtnUsed = eventData.button;
     }//OnPointerDown
 
 
-    public void OnPointerUp(PointerEventData eventData) {
+    public virtual void OnPointerUp(PointerEventData eventData) {
         this.bIsPressed = false;
         this.bIsReleased = true;
     }//OnPointerDown
 
 
-    public void OnPointerEnter(PointerEventData eventData) {
+    public virtual void OnPointerEnter(PointerEventData eventData) {
         this.bIsHoveredOver = true;
     }//OnPointerEnter
 
 
-    public void OnPointerExit(PointerEventData eventData) {
+    public virtual void OnPointerExit(PointerEventData eventData) {
         this.bIsHoveredOver = true;
     }//OnPointerExit
 

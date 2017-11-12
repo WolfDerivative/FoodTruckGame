@@ -13,9 +13,13 @@ public class Calendar : MonoBehaviour {
 
 
     public void Start(){
-        Instance = this;
+        if (Instance == null)
+            Instance = this;
+        else {
+            DestroyImmediate(this.transform.parent.gameObject); //To ensure only one copy exists.
+        }
         #if UNITY_EDITOR
-            if (IsOverrideToday)
+        if (IsOverrideToday)
                 SetDay(OverrideToday);
         #endif
     }//Start
@@ -35,8 +39,10 @@ public class Calendar : MonoBehaviour {
         return this.eToday;
     }//NextDay
 
+
     /// <summary>
     ///  Set today's day.
     /// </summary>
     public void SetDay(Day d) { this.eToday = d; }
+
 }//class

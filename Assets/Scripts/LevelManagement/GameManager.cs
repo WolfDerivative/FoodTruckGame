@@ -5,6 +5,8 @@ public class GameManager : MonoBehaviour {
 
     public static GameManager Instance;
 
+    [Tooltip("Do not save the game in the end of the level. For testing purposes")]
+    public bool DontSave = false;
     public Storage GlobalStorage;
     public GameObject FloatingTextPrefab;
     public Savable SavabledData {
@@ -20,8 +22,10 @@ public class GameManager : MonoBehaviour {
     public void Start() {
         if (Instance == null)
             Instance = this;
-        else
-            DestroyImmediate(this.gameObject); //To ensure only one copy exists.
+        else {
+            DestroyImmediate(this.transform.parent.gameObject); //To ensure only one copy exists.
+        }
+
         LoadGame();
     }//Start
 
@@ -32,7 +36,8 @@ public class GameManager : MonoBehaviour {
         gd.SetCurrentDay((int)Calendar.Instance.Today);
         gd.SetStorage(Shop.Instance.StorageState);
         SavabledData.SetGameStateData(gd);
-        this.saveLoad.Save(SavabledData);
+
+        this.saveLoad.Save(SavabledData, !DontSave);
     }//SaveGame
 
 

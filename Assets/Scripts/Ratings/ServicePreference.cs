@@ -5,8 +5,6 @@
 [System.Serializable]
 public class ServicePreference {
 
-    public Vector3 Range;
-
     /// <summary>
     ///  Get the grade for the recieved value in a given range.
     /// Return Grade when "recieved" falls into the given "range".

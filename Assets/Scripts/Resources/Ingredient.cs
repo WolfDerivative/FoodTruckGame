@@ -10,6 +10,15 @@ public class Ingredient {
     public float Max = 50;
 
 
+    public Ingredient() { }
+
+
+    public Ingredient(float count, float max) {
+        this.Count = count;
+        this.Max = max;
+    }//ctor
+
+
     public void Add(float amount) {
         Count += amount;
         if (Count < 0)
@@ -25,5 +34,10 @@ public class Ingredient {
     public void Reset() {
         Count = 0;
     }//Reset
+
+
+    public override string ToString() {
+        return string.Format("Count: {0}; Max: {1}", Count, Max);
+    }//ToString
 
 }//class

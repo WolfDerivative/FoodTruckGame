@@ -4,23 +4,25 @@ using UnityEngine.SceneManagement;
 public class LevelManager : MonoBehaviour {
 
     public static LevelManager Instance;
-    [Tooltip("Do not save the game in the end of the level. For testing purposes")]
-    public bool DontSave = false;
+
     public bool IsLevelComplete             { get { return this.checkLevelComplete(); } }
     public int  TotalPotentialCustommers    { get { return _weekday.WaveCmp.TotalSpawns; } }
 
-    protected float waitBeforeLevelComplete = 3f;
 
+    private float               waitBeforeLevelComplete = 3f;
     private float               theEndCountdown;
     private WeekdayBehaviour    _weekday;
-    private bool                bHasSaved;
     private DistrictData        districtSaveData;
+    private bool                bHasSaved;
+    private bool                bIsLevelCompleted;
 
 
     public void Start() {
         Instance = this;
         _weekday = GetComponentInChildren<WeekdayBehaviour>();
         this.bHasSaved = false;
+        this.bIsLevelCompleted = false;
+        this.theEndCountdown = 0f;
 
         var savedGame = GameManager.Instance.LoadGame();
         this.districtSaveData = savedGame.GetDistrictDataByName(SceneManager.GetActiveScene().name);
@@ -31,6 +33,9 @@ public class LevelManager : MonoBehaviour {
 
 
     public void Update() {
+        if(this.bIsLevelCompleted)
+            return;
+
         if (_weekday.IsReady) {
             if (!_weekday.WaveCmp.IsCanSpawn) {
                 _weekday.WaveCmp.SetModifier(_weekday.GetModifier());
@@ -41,11 +46,14 @@ public class LevelManager : MonoBehaviour {
 
 
     public void LateUpdate() {
-        bool isCompleted = this.checkLevelComplete();
-        if(!isCompleted)
+        if(this.bIsLevelCompleted)
+            return;
+
+       this.bIsLevelCompleted = this.checkLevelComplete();
+        if(!this.bIsLevelCompleted)
             this.bHasSaved = false;
 
-        if (isCompleted) {
+        if (this.bIsLevelCompleted) {
             if(this.bHasSaved) //savegame onlt once.
                 return;
             SetGameSpeed(1);    //reset gamespeed back to normal
@@ -68,10 +76,17 @@ public class LevelManager : MonoBehaviour {
     /// not waiting in the line or walking towards the shop.
     /// </summary>
     protected bool checkLevelComplete() {
-        if (_weekday.WaveCmp == null) //_wave has not yet initiated
+        //_wave has not yet initiated
+        if (_weekday.WaveCmp == null) {
+            GameUtils.Utils.WarningMessage(_weekday.name + " WaveCmp is null in LevelMangaer!");
             return false;
-        if(!_weekday.WaveCmp.IsWaveStarted) //wave has not started spawn routine yet.
+        }//if wave is null
+
+        //wave has not started spawn routine yet.
+        if (!_weekday.WaveCmp.IsWaveStarted) {
+            GameUtils.Utils.WarningMessage(_weekday.WaveCmp.name + " has not yet started spawn routine.");
             return false;
+        }//if not started
 
         if (!_weekday.WaveCmp.IsNoMoreSpawns)
             return false;
@@ -80,8 +95,8 @@ public class LevelManager : MonoBehaviour {
             Shop.Instance.OrderedQ.Count > 0)
             return false;
 
-        theEndCountdown += Time.deltaTime;
-        if (theEndCountdown < waitBeforeLevelComplete)
+        this.theEndCountdown += Time.deltaTime;
+        if (this.theEndCountdown < this.waitBeforeLevelComplete)
             return false;
 
         return true;
@@ -89,11 +104,9 @@ public class LevelManager : MonoBehaviour {
 
 
     public void OnDestroy() {
-        if(DontSave)
-            return;
         this.districtSaveData.SetReputation(District.Instance.ReputationStatus);
-        GameManager.Instance.SaveGameDistrict(this.districtSaveData);
         Calendar.Instance.NextDay();
+        GameManager.Instance.SaveGameDistrict(this.districtSaveData);
         GameManager.Instance.SaveGame();
     }//OnDestroy
 

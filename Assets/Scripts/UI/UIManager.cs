@@ -5,13 +5,25 @@ using UnityEngine.SceneManagement;
 public class UIManager : MonoBehaviour {
 
     public static UIManager Instance;
+    public Canvas SceneCanvas {
+        get {
+            if(_canvas == null)
+                _canvas = GetComponent<Canvas>();
+            return _canvas;
+        }//get
+    }//SceneCanvas
+
+    protected Canvas _canvas;
 
 
     public void Start() {
-        if (Instance == null)
+        if (Instance == null) {
             Instance = this;
-        else
+        } else {
             DestroyImmediate(this.gameObject); //To ensure only one copy exists.
+            return;
+        }
+        _canvas = GetComponent<Canvas>();
     }//Start
 
 
@@ -42,6 +54,10 @@ public class UIManager : MonoBehaviour {
 
             group.SetActive(false);
         }//for
+
+        //Use loaded scene's camera on load
+        if(SceneCanvas.worldCamera == null)
+            SceneCanvas.worldCamera = Camera.main;
     }//OnSceneLoaded
 
 }//class

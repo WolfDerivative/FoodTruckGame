@@ -52,10 +52,10 @@ public class ConsumerRating {
         avg += (float)SeasoningsPref.GradeByRange(received.Seasonings.Count);
         avg += (float)DrinksPref.GradeByRange(received.Drinks.Count);
 
-        avg += (float)WaitTimePref.GradeByRange(timeWaited);
+        //avg += (float)WaitTimePref.GradeByRange(timeWaited);
 
         Rating ratingObj = new Rating();
-        avg = avg / 4;
+        avg = avg / 3;
         this.finalGrade = ratingObj.IntToEnumGrade(Mathf.FloorToInt(avg));
 
         return this;

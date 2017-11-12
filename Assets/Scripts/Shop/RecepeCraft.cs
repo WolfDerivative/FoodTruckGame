@@ -2,10 +2,18 @@
 
 public class RecepeCraft : ResourceModifier {
 
+    public override Ingredient IngredientType {
+        get {
+            return Shop.Instance.RecepeToServe.ObjectFromType(this.ModType);
+        }//get
+    }//IngredientType
+
+
     public override float Add(float amount = float.NegativeInfinity) {
         float unitsToAdd = base.Add(amount);
         //update cuurent value units
         tValue.text = (unitsToAdd + this.CurrentValue).ToString();
+
         Shop.Instance.RecepeToServe.Add(unitsToAdd, ModType);
         return unitsToAdd;
     }//Add

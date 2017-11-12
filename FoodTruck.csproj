@@ -267,6 +267,8 @@
     <Compile Include="Assets\Scripts\UI\CalendarUI.cs" />
     <Compile Include="Assets\Scripts\UI\CameraToCanvas.cs" />
     <Compile Include="Assets\Scripts\UI\HoldableButton.cs" />
+    <Compile Include="Assets\Scripts\UI\Navbar\UINavBar.cs" />
+    <Compile Include="Assets\Scripts\UI\Navbar\UINavbarButton.cs" />
     <Compile Include="Assets\Scripts\UI\RecepeUI.cs" />
     <Compile Include="Assets\Scripts\UI\ResourceModifier.cs" />
     <Compile Include="Assets\Scripts\UI\StorageUI.cs" />

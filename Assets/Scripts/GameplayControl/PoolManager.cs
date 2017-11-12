@@ -28,7 +28,7 @@ public class PoolManager: MonoBehaviour {
             _pools = new List<ObjectPool>(GetComponentsInChildren<ObjectPool>());
 
         if (IsEmpty) {
-            GameUtils.Utils.WarningMessage("Empty pool in " + this.name);
+            GameUtils.Utils.WarningMessage("Empty pool in " + this.name + ". Forgot to add Population prefabs?");
             return null;
         }//if empty
 

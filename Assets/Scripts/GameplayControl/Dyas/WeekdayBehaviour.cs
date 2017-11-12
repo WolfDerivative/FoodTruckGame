@@ -14,7 +14,13 @@ public class WeekdayBehaviour : MonoBehaviour {
         new DayModifier(Calendar.Day.Sun)
     };
 
-    public bool IsReady { get { return Calendar.Instance != null && WaveCmp != null; } }
+    public bool IsReady { get {
+            if(Calendar.Instance == null)
+                GameUtils.Utils.WarningMessage("Callendar Instance not set! Referenced by " + this.name);
+            return Calendar.Instance != null && WaveCmp != null;
+        }//get
+    }//IsReady
+
     public Wave WaveCmp {
         get {
             if(_wave == null)

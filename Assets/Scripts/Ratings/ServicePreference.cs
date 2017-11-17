@@ -12,27 +12,27 @@ public class ServicePreference {
     /// <param name="range">Range defining the grade. X = C, Y = A...</param>
     /// <param name="received">Feedback value given by the customer.</param>
     /// <param name="isReverse">X becomes upper bracket (e.g. Y).</param>
-    public virtual Rating.Grade RatioByRange(Vector3 range, float received) {
-        Rating.Grade grade = Rating.Grade.F;
+    //public virtual Rating.Grade RatioByRange(Vector3 range, float received) {
+    //    Rating.Grade grade = Rating.Grade.F;
 
-        if (received < range.x)
-            grade = Rating.Grade.F;
+    //    if (received < range.x)
+    //        grade = Rating.Grade.F;
 
-        if (received >= range.x && received < range.y)
-            grade = Rating.Grade.C;
+    //    if (received >= range.x && received < range.y)
+    //        grade = Rating.Grade.C;
 
-        if (received >= range.y && received < range.z)
-            grade = Rating.Grade.B;
+    //    if (received >= range.y && received < range.z)
+    //        grade = Rating.Grade.B;
 
-        if (received == range.z)
-            grade = Rating.Grade.A;
+    //    if (received == range.z)
+    //        grade = Rating.Grade.A;
 
-        if (received > range.z)
-            grade = Rating.Grade.F;
+    //    if (received > range.z)
+    //        grade = Rating.Grade.F;
 
-        Debug.Log(grade + " -> " + received + " | " + range);
-        return grade;
-    }//SatisfactionValue
+    //    Debug.Log(grade + " -> " + received + " | " + range);
+    //    return grade;
+    //}//SatisfactionValue
 
 }//class
 

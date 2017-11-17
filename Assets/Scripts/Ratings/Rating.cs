@@ -5,9 +5,13 @@
 public class Rating {
     public enum Grade { F = 1, C = 2, B = 3, A = 4 }
 
+    [Tooltip("F <= value > A")]
     public float F = -1;
+    [Tooltip("C <= value > F")]
     public float C = 0;
+    [Tooltip("B <= value > C")]
     public float B = 1;
+    [Tooltip("A <= value > B")]
     public float A = 2;
  
     public virtual Grade FinalGrade { get { return finalGrade; } }

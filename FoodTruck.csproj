@@ -261,9 +261,15 @@
     <Compile Include="Assets\Scripts\Shop\Resources.cs" />
     <Compile Include="Assets\Scripts\Shop\Shop.cs" />
     <Compile Include="Assets\Scripts\Shop\ShopDebuggingConsole.cs" />
-    <Compile Include="Assets\Scripts\Shop\ShopProperties.cs" />
     <Compile Include="Assets\Scripts\Shop\ShopStorage.cs" />
     <Compile Include="Assets\Scripts\Shop\Storage.cs" />
+    <Compile Include="Assets\Scripts\Shop\Upgrades\Kitchen.cs" />
+    <Compile Include="Assets\Scripts\Shop\Upgrades\ShopProperties.cs" />
+    <Compile Include="Assets\Scripts\Shop\Upgrades\Staff.cs" />
+    <Compile Include="Assets\Scripts\Shop\Upgrades\TruckMods\CashierMod.cs" />
+    <Compile Include="Assets\Scripts\Shop\Upgrades\TruckMods\CookingMod.cs" />
+    <Compile Include="Assets\Scripts\Shop\Upgrades\TruckMods\ExteriorMod.cs" />
+    <Compile Include="Assets\Scripts\Shop\Upgrades\TruckMods\StoveMod.cs" />
     <Compile Include="Assets\Scripts\UI\CalendarUI.cs" />
     <Compile Include="Assets\Scripts\UI\CameraToCanvas.cs" />
     <Compile Include="Assets\Scripts\UI\HoldableButton.cs" />
@@ -271,6 +277,7 @@
     <Compile Include="Assets\Scripts\UI\Navbar\UINavbarButton.cs" />
     <Compile Include="Assets\Scripts\UI\RecepeUI.cs" />
     <Compile Include="Assets\Scripts\UI\ResourceModifier.cs" />
+    <Compile Include="Assets\Scripts\UI\Slideshow\SelectionSlider.cs" />
     <Compile Include="Assets\Scripts\UI\StorageUI.cs" />
     <Compile Include="Assets\Scripts\UI\UIEventManager.cs" />
     <Compile Include="Assets\Scripts\UI\UIManager.cs" />

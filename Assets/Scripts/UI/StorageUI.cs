@@ -87,7 +87,9 @@ public class StorageUI : MonoBehaviour {
             break;
         }//foreach
         if(textOjb == null) {
-            GameUtils.Utils.WarningGONotFound(objName + " Was not found or doesnt have Text component attached!");
+            GameUtils.Utils.WarningGONotFound("GO '" + this.name + 
+                "' searched '" + objName + 
+                "' Was not found or doesnt have Text component attached!");
             return false;
         }
         return true;

@@ -60,6 +60,10 @@ public class ResourceModifier : MonoBehaviour {
             UnitsMod.SetActive(false);
             _uiEventManager = this.UnitsMod.GetComponent<UIEventManager>();
         }
+        if (GameManager.Instance != null) {
+            CheckCanAddMore();
+            CheckCanSubstract();
+        }
     }//Start
 
 
@@ -69,6 +73,29 @@ public class ResourceModifier : MonoBehaviour {
         this.addOrSubstructButton(ref _btnAddHoldable, false);
         this.addOrSubstructButton(ref _btnSubstructHoldable, true);
     }//Update
+
+
+    public void LateUpdate() {
+        CheckButtonsState();
+    }//LateUpdate
+
+
+    /// <summary>
+    ///  Check if can Add or Substruct more units. If cant - disable buttons.
+    /// Otherwise - enable.
+    /// </summary>
+    public void CheckButtonsState() {
+        float subtotal = this.CurrentValue + IngredientType.Count;
+        if (subtotal >= IngredientType.Max)
+            this.btnAdd.interactable = false;
+        else
+            this.btnAdd.interactable = true;
+
+        if (this.CurrentValue <= 0)
+            this.btnSubstruct.interactable = false;
+        else
+            this.btnSubstruct.interactable = true;
+    }//CheckButtonsState
 
 
     private void addOrSubstructButton(ref HoldableButton holdable, bool isSubstruct) {
@@ -109,7 +136,7 @@ public class ResourceModifier : MonoBehaviour {
         //How many units can be added to reach allowed Max.
         float valueLimit = IngredientType.Max - IngredientType.Count;
 
-        if(valueLimit == 0)
+        if (valueLimit == 0)
             return 0;
 
         //Number of units potentially extending the limit.
@@ -137,6 +164,11 @@ public class ResourceModifier : MonoBehaviour {
         }//if amount
 
         float toSubstruct = (this.CurrentValue - amount) < 0 ? this.CurrentValue : amount;
+
+        if (toSubstruct == 0)
+            this.btnSubstruct.interactable = false;
+        else
+            this.btnSubstruct.interactable = true;
 
         return toSubstruct;
     }//Substruct
@@ -181,5 +213,31 @@ public class ResourceModifier : MonoBehaviour {
     }//SetTxt
 
 
+    public void CheckCanAddMore() {
+        if (this.btnAdd == null)
+            return;
+        if (this.IngredientType.IsFull)
+            this.btnAdd.interactable = false;
+        else
+            this.btnAdd.interactable = true;
+    }//CheckCanAddMore
+
+
+    public void CheckCanSubstract() {
+        if (this.btnSubstruct == null)
+            return;
+        if (this.CurrentValue <= 0)
+            this.btnSubstruct.interactable = false;
+        else
+            this.btnSubstruct.interactable = true;
+    }//CheckCanSubstract
+
+
+    public void OnEnable() {
+        if (GameManager.Instance == null)
+            return;
+        CheckCanAddMore();
+        CheckCanSubstract();
+    }//OnEnable
 
 }//class

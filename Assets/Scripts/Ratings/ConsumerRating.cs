@@ -47,16 +47,20 @@ public class ConsumerRating {
     /// <param name="received">Recepe that was served to the customer.</param>
     /// <param name="timeWaited">How long did customer wait to get the order.</param>
     public ConsumerRating RateService(Recepe received, float timeWaited) {
+        Rating ratingObj = new Rating();
         float avg = 0;
         avg += (float)BrainsPref.GradeByRange(received.Brains.Count);
         avg += (float)SeasoningsPref.GradeByRange(received.Seasonings.Count);
         avg += (float)DrinksPref.GradeByRange(received.Drinks.Count);
 
-        //avg += (float)WaitTimePref.GradeByRange(timeWaited);
-
-        Rating ratingObj = new Rating();
         avg = avg / 3;
-        this.finalGrade = ratingObj.IntToEnumGrade(Mathf.FloorToInt(avg));
+        int roundedAvg = 0;
+        if( ((decimal)avg % 1.0m) > (decimal)0.5)
+            roundedAvg = Mathf.CeilToInt(avg);
+        else
+            roundedAvg = Mathf.FloorToInt(avg);
+
+        this.finalGrade = ratingObj.IntToEnumGrade(roundedAvg);
 
         return this;
     }//GetSatisfactionRatio
@@ -99,20 +103,19 @@ public class IngredientRating : Rating{
         if (received <= F || received > A)
             grade = Grade.F;
 
-        if (received >= C && received < B)
+        if (received > F && received <= C)
             grade = Grade.C;
 
-        if (received >= B && received < A)
+        if (received > C && received <= B)
             grade = Grade.B;
 
-        if (received == A)
+        if ((received > B && received <= A) || received == A)
             grade = Grade.A;
         
         this.SetGrade(grade);
-        //this.SetScore(GradeWeight(grade));
         return grade;
     }//RatioByRange
-}//Rating class
+}//class Rating
 
 
 [System.Serializable]
@@ -138,7 +141,6 @@ public class WaittimeRaiting : IngredientRating {
             grade = Grade.F;
 
         this.SetGrade(grade);
-        //this.SetScore(GradeWeight(grade));
         return grade;
     }//RatioByRange
-}
+}//class WaittimeRaiting

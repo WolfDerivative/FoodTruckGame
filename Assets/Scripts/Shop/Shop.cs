@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,22 +9,19 @@ public class Shop : MonoBehaviour {
 
     public List<BasicAI> WaitingQ   { get { return this.waitingQueue; } }
     public List<BasicAI> OrderedQ   { get { return this.orderedQueue; } }
-    public Storage StorageState     { get { return _shopStorage; } }
+    public Storage StorageState     { get { return GameManager.Instance.GlobalStorage; } }
     public int MaxWaitingQueue      { get { return this.maxWaitingCustomers; } }
-
-    public List<BasicAI> waitingQueue;  //FIXME: make it private
-    public List<BasicAI> orderedQueue;  //FIXME: make it private
-
     public Recepe RecepeToServe;
 
     protected SpriteRenderer    _spriteRenderer;
     protected BoxCollider2D     _boxCollider;
     protected ShopProperties    _shopProps;
     protected Dictionary<BasicAI, Recepe> cooking;
-    protected Storage _shopStorage;
     protected bool bIsEnoughIngredients { get { return ValidateStockForRecepe(); } }
 
     private int maxWaitingCustomers;
+    private List<BasicAI> waitingQueue;
+    private List<BasicAI> orderedQueue;
 
 
     /* ----------------------------------------------------------------------- */
@@ -34,7 +30,6 @@ public class Shop : MonoBehaviour {
     public void Start() {
         Instance = this;
         this.initComponents();
-        _shopStorage = GameManager.Instance.GlobalStorage;
         _shopProps = GetComponent<ShopProperties>();
         Reset();
     }//Start
@@ -55,7 +50,7 @@ public class Shop : MonoBehaviour {
     }//Reset
 
     public void LateUpdate() {
-        if (orderedQueue.Count < _shopProps.MaxOrders)
+        if (orderedQueue.Count < _shopProps.GetMaxOrders())
             TakeOrder();
         if(orderedQueue.Count > 0)
             CookAndServe();
@@ -86,7 +81,7 @@ public class Shop : MonoBehaviour {
             return;
         }//if
 
-        _shopStorage.Substruct(RecepeToServe);
+        StorageState.Substruct(RecepeToServe);
         //dispose food for the client if he ordered before, 
         //but food was not removed from the grill.
         DisposeCooked(client);
@@ -107,7 +102,7 @@ public class Shop : MonoBehaviour {
         }
 
         float cash = client.RecieveOrder(toServe);
-        _shopStorage.Cash.Add(cash);
+        StorageState.Cash.Add(cash);
         if (orderedQueue.Contains(client)) {
             orderedQueue.Remove(client);
         }
@@ -157,11 +152,11 @@ public class Shop : MonoBehaviour {
     /// </summary>
     /// <returns>True - life is good. False - not enough ingredients.</returns>
     public bool ValidateStockForRecepe() {
-        if (_shopStorage.Brains.Count < RecepeToServe.Brains.Count)
+        if (StorageState.Brains.Count < RecepeToServe.Brains.Count)
             return false;
-        if (_shopStorage.Seasonings.Count < RecepeToServe.Seasonings.Count)
+        if (StorageState.Seasonings.Count < RecepeToServe.Seasonings.Count)
             return false;
-        if (_shopStorage.Drinks.Count < RecepeToServe.Seasonings.Count)
+        if (StorageState.Drinks.Count < RecepeToServe.Seasonings.Count)
             return false;
 
         return true;
@@ -185,10 +180,7 @@ public class Shop : MonoBehaviour {
             this.orderedQueue.Remove(client);
     }//ClientWalkedAway
 
-
-    public void SetStorage(Storage st) { this._shopStorage = st; }
-
-
+    
     public void OnTriggerEnter2D(Collider2D collision) {
         if(collision.tag.ToLower() != "pedestrian")
             return;
@@ -197,7 +189,10 @@ public class Shop : MonoBehaviour {
         if (pedestrian == null)
             return;
 
-        bool isPriceGood = District.Instance.TryAttactByPrice(RecepeToServe.Cash.Count);
+        float priceSwing = RecepeToServe.Cash.Count - this._shopProps.GetPriceSwing();
+        if(priceSwing < 0)
+            priceSwing = 0;
+        bool isPriceGood = District.Instance.TryAttactByPrice(priceSwing);
 
         if (!isPriceGood) {
             Debug.Log("Bad Price!");

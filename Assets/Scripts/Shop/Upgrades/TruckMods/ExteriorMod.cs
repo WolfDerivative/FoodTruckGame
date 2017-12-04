@@ -10,10 +10,10 @@ public class ExteriorMod {
 
 
     /// <summary>
-    /// Set every parameter to 0;
+    /// Set defaults. AttractionChance=0.5; PriceSwing = 0;
     /// </summary>
     public ExteriorMod() {
-        this.AttractionChance = 0;
+        this.AttractionChance = 0.5f;
         this.PriceSwing = 0;
     }//default ctor
 

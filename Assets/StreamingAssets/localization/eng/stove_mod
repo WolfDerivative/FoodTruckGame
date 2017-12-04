@@ -1,0 +1,9 @@
+{ 
+	"entries" : [
+		{ 
+			"ID" : "Stove_1",
+			"Description" : "Something here",
+			"DisplayName" : "Wooden Stove Thing"
+		}
+	]
+}

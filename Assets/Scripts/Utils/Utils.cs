@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.IO;
 using UnityEngine;
 
 namespace GameUtils {
@@ -56,7 +55,6 @@ namespace GameUtils {
         }//OrthographicBounds
 
 
-
         public static bool[] IsWithinBounds(Bounds checkWithin, Vector3 target) {
             var inHorizontal = target.x > checkWithin.min.x && target.x < checkWithin.max.x;
             var inVertical = target.y > checkWithin.min.y && target.y < checkWithin.max.y;
@@ -74,6 +72,13 @@ namespace GameUtils {
             Debug.LogWarning("Couldn't find Spawner with the name '" + goName + "'!");
         #endif
         }
+
+
+        public static void ErrorMessage(string msg) {
+        #if UNITY_EDITOR
+            Debug.LogError(msg);
+        #endif
+        }//ErrorMessage
 
 
         public static void WarningMessage(string msg) {

@@ -1,0 +1,13 @@
+{ 
+	"upgrades" : [
+		{ 
+			"CookSpeed" : "0.1f",
+			"FastCookChance" : "0.001f",
+			"IsActive" : "False",
+			"IsOccupied" : "False"
+			"Description" : "Something here",
+			"DisplayName" : "Wooden Stove Thing",
+			"Description" : "A simple stove that can cook."
+		}
+	]
+}

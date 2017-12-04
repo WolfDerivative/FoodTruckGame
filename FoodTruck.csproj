@@ -244,6 +244,8 @@
     <Compile Include="Assets\Scripts\LevelManagement\GameManager.cs" />
     <Compile Include="Assets\Scripts\LevelManagement\LevelManager.cs" />
     <Compile Include="Assets\Scripts\LevelManagement\LevelStats.cs" />
+    <Compile Include="Assets\Scripts\Localization\LocalizationData.cs" />
+    <Compile Include="Assets\Scripts\Localization\LocalizationManager.cs" />
     <Compile Include="Assets\Scripts\LookAlive.cs" />
     <Compile Include="Assets\Scripts\Ratings\ConsumerRating.cs" />
     <Compile Include="Assets\Scripts\Ratings\Rating.cs" />
@@ -263,6 +265,8 @@
     <Compile Include="Assets\Scripts\Shop\ShopDebuggingConsole.cs" />
     <Compile Include="Assets\Scripts\Shop\ShopStorage.cs" />
     <Compile Include="Assets\Scripts\Shop\Storage.cs" />
+    <Compile Include="Assets\Scripts\Shop\Upgrades\Exterior.cs" />
+    <Compile Include="Assets\Scripts\Shop\Upgrades\FrontDesk.cs" />
     <Compile Include="Assets\Scripts\Shop\Upgrades\Kitchen.cs" />
     <Compile Include="Assets\Scripts\Shop\Upgrades\ShopProperties.cs" />
     <Compile Include="Assets\Scripts\Shop\Upgrades\Staff.cs" />
@@ -270,6 +274,7 @@
     <Compile Include="Assets\Scripts\Shop\Upgrades\TruckMods\CookingMod.cs" />
     <Compile Include="Assets\Scripts\Shop\Upgrades\TruckMods\ExteriorMod.cs" />
     <Compile Include="Assets\Scripts\Shop\Upgrades\TruckMods\StoveMod.cs" />
+    <Compile Include="Assets\Scripts\Shop\Upgrades\UpgradesManager.cs" />
     <Compile Include="Assets\Scripts\UI\CalendarUI.cs" />
     <Compile Include="Assets\Scripts\UI\CameraToCanvas.cs" />
     <Compile Include="Assets\Scripts\UI\HoldableButton.cs" />
@@ -285,6 +290,9 @@
     <Compile Include="Assets\Scripts\UI\UIMenuPopups\UIMenuPopup.cs" />
     <Compile Include="Assets\Scripts\UI\UINavigation.cs" />
     <Compile Include="Assets\Scripts\UI\UISetter.cs" />
+    <Compile Include="Assets\Scripts\UI\UIUpgrades\StoveStore.cs" />
+    <Compile Include="Assets\Scripts\UI\UIUpgrades\UpgradeSelection.cs" />
+    <Compile Include="Assets\Scripts\UI\UIUpgrades\UpgradeStore.cs" />
     <Compile Include="Assets\Scripts\Utils\FloatingText.cs" />
     <Compile Include="Assets\Scripts\Utils\TextToWorld.cs" />
     <Compile Include="Assets\Scripts\Utils\Utils.cs" />

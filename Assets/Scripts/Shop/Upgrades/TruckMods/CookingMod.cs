@@ -10,5 +10,8 @@ public class CookingMod {
     [Range(0f, 1f)]
     public float FastCookChance = 0.001f;
 
+    public string Description;
+    public string DisplayName;
+
 
 }//class CookingMod

@@ -8,11 +8,13 @@ public class CashierMod {
     [Tooltip("How many people can be standing in line.")]
     [Range(10, 50)] public int MaxLineSize = 5;
 
-
+    /// <summary>
+    ///  Default constructor to use min value for each parameter.
+    /// </summary>
     public CashierMod() {
-        this.MaxOrders = 0;
-        this.MaxLineSize = 0;
-    }//ctor
+        this.MaxOrders = 1;
+        this.MaxLineSize = 10;
+    }//default ctor
 
 
 }//class CashierMod

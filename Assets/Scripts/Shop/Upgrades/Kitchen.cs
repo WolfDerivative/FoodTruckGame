@@ -1,55 +1,35 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class Kitchen : MonoBehaviour{
 
     [Tooltip("How many Stove can be placed.")]
     [Range(1, 3)] public int StoveSlots = 1;
 
-    public StoveMod[] stoves;
-    private Staff[] assignedStaff;
+    public List<StoveMod> stoves;
+    private List<Staff> assignedStaff;
 
 
     public Kitchen() {
-        this.stoves = new StoveMod[StoveSlots];
-        this.stoves[0] = new StoveMod(true);
+        this.stoves = new List<StoveMod>();
+        this.stoves.Add(new StoveMod(true));
     }//ctor
 
 
-    public void SetStove(StoveMod newStove, int slotIndex) {
-        if(this.stoves == null)
-            this.stoves = new StoveMod[StoveSlots];
-
-        if (slotIndex > StoveSlots - 1) {
-            GameUtils.Utils.WarningMessage("Slot index " + slotIndex + " out of range!");
-            return;
-        }
-
-        this.stoves[slotIndex] = new StoveMod(newStove);
+    public bool AddStove(StoveMod newStove) {
+        if(stoves.Count >= StoveSlots)
+            return false;
+        this.stoves.Add(new StoveMod(newStove));
+        return true;
     }//SetStove
 
 
-    public void AssignStaff(Staff newStaff, int staffIndex) {
-        if(this.assignedStaff == null)
-            this.assignedStaff = new Staff[StoveSlots];
-
-        if (staffIndex> StoveSlots - 1) {
-            GameUtils.Utils.WarningMessage("Staff index " + staffIndex + " out of range!");
-            return;
-        }
-
-        this.assignedStaff[staffIndex] = newStaff;
+    public bool AddStaff(Staff newStaff) {
+        if(this.assignedStaff.Count >= StoveSlots)
+            return false;
+        this.assignedStaff.Add(newStaff);
+        return true;
     }//AssignStaff
-
-
-    /// <summary>
-    ///  Return sum of default FastCookChance value with it
-    /// Stoves' mods. If no mods attached - return truck's default.
-    /// </summary>
-    public float GetFastCookChance() {
-        if (this.stoves.Length == 1) //no mods attached
-            return this.stoves[0].FastCookChance;
-        return SumAllFastCookMods();
-    }//GetFastCookChance
 
 
     /// <summary>
@@ -58,21 +38,21 @@ public class Kitchen : MonoBehaviour{
     /// a staff member. If no staff member is present, but multiple
     /// stoves are available, use the one with the highest chance.
     /// </summary>
-    public float SumAllFastCookMods() {
+    public float GetFastCookChance() {
         float total = 0;
         float highestChance = 0;
-        for (int i = 0; i < this.stoves.Length; i++) {
-            if(!this.stoves[i].IsActive)
+        for (int i = 0; i < this.stoves.Count; i++) {
+            if (!this.stoves[i].IsActive)
                 continue;
-            if(highestChance < this.stoves[i].FastCookChance)
+            if (highestChance < this.stoves[i].FastCookChance)
                 highestChance = this.stoves[i].FastCookChance;
             //Use only those that are occupied by a staff member.
-            if(this.stoves[i].IsOccupied)
+            if (this.stoves[i].IsOccupied)
                 total += this.stoves[i].FastCookChance;
         }//for
-        if(total == 0)
+        if (total == 0)
             total = highestChance;
         return total;
-    }//SumAllFastCookMods
+    }//GetFastCookChance
 
 }//class Kitchen
